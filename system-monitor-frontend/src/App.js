@@ -9,7 +9,7 @@ const SystemMonitor = () => {
   useEffect(() => {
     // WebSocket connection
     const websocket = new WebSocket(
-      `ws://${window.location.hostname}:8080`
+      `ws://${window.location.hostname}:5000`
     );
     
     websocket.onopen = () => {
