@@ -1,10 +1,13 @@
-# Use a lightweight web server to serve the local build
-FROM nginx:alpine
+# Use official Node.js image as the build environment
+FROM node:20-alpine
 
-WORKDIR /usr/share/nginx/html
+WORKDIR /app
 
-# Copy the local build directory into the image
-COPY build/ .
+COPY package*.json ./
+RUN npm install
 
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+COPY . .
+RUN npm run build
+
+EXPOSE 3000
+CMD ["npm", "run", "start"]

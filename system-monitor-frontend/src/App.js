@@ -8,7 +8,9 @@ const SystemMonitor = () => {
 
   useEffect(() => {
     // WebSocket connection
-    const websocket = new WebSocket('ws://localhost:5000');
+    const websocket = new WebSocket(
+      `ws://${window.location.hostname}:8080`
+    );
     
     websocket.onopen = () => {
       console.log('Connected to WebSocket server');

@@ -440,7 +440,7 @@ wss.on('connection', (ws) => {
     if (ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify(getSystemInfo()));
     }
-  }, 2000);
+  }, 1000);
   
   // Handle client disconnection
   ws.on('close', () => {
