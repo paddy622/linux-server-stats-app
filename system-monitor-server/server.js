@@ -282,47 +282,44 @@ function getNetworkInfo() {
 // Function to get disk usage from host
 function getDiskUsage() {
   try {
-    // Try to read from host filesystem
-    if (fs.existsSync('/host/proc/mounts')) {
-      const mounts = fs.readFileSync('/host/proc/mounts', 'utf8');
-      const lines = mounts.split('\n');
-      
-      // Look for root filesystem
-      for (let line of lines) {
-        const parts = line.split(/\s+/);
-        if (parts.length >= 2 && parts[1] === '/') {
-          try {
-            const stats = fs.statSync('/host');
-            // This is a simplified approach - in a real scenario you'd want to use statvfs
-            return {
-              total: 'Host FS',
-              used: 'N/A',
-              available: 'N/A',
-              usage: 0
-            };
-          } catch (e) {
-            break;
-          }
-        }
+    // Try to use 'df' on the host root filesystem
+    if (fs.existsSync('/host/bin/df')) {
+      // Use the host's df binary if available
+      const output = execSync('/host/bin/df -k /host', { encoding: 'utf8' });
+      const lines = output.trim().split('\n');
+      if (lines.length > 1) {
+        const parts = lines[1].split(/\s+/);
+        // parts: [Filesystem, 1K-blocks, Used, Available, Use%, Mounted on]
+        return {
+          total: Math.round(parseInt(parts[1], 10) / 1024 / 1024 * 100) / 100, // GB
+          used: Math.round(parseInt(parts[2], 10) / 1024 / 1024 * 100) / 100,  // GB
+          available: Math.round(parseInt(parts[3], 10) / 1024 / 1024 * 100) / 100, // GB
+          usage: parseFloat(parts[4].replace('%', ''))
+        };
+      }
+    } else {
+      // Fallback: try using container's df on /host or /
+      let output;
+      try {
+        output = execSync('df -k /host', { encoding: 'utf8' });
+      } catch {
+        output = execSync('df -k /', { encoding: 'utf8' });
+      }
+      const lines = output.trim().split('\n');
+      if (lines.length > 1) {
+        const parts = lines[1].split(/\s+/);
+        return {
+          total: Math.round(parseInt(parts[1], 10) / 1024 / 1024 * 100) / 100, // GB
+          used: Math.round(parseInt(parts[2], 10) / 1024 / 1024 * 100) / 100,  // GB
+          available: Math.round(parseInt(parts[3], 10) / 1024 / 1024 * 100) / 100, // GB
+          usage: parseFloat(parts[4].replace('%', ''))
+        };
       }
     }
-    
-    // Try using df command on host root if available
-    const output = execSync('df -h /host 2>/dev/null || df -h /', { encoding: 'utf8' });
-    const lines = output.trim().split('\n');
-    if (lines.length > 1) {
-      const parts = lines[1].split(/\s+/);
-      return {
-        total: parts[1],
-        used: parts[2],
-        available: parts[3],
-        usage: parseFloat(parts[4].replace('%', ''))
-      };
-    }
   } catch (error) {
-    console.log('Disk usage not available');
+    console.log('Disk usage not available:', error.message);
   }
-  
+
   return {
     total: 'N/A',
     used: 'N/A',
