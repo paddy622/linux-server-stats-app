@@ -363,6 +363,19 @@ const SystemMonitor = () => {
                     {systemData.cpu.model}
                   </div>
                 </div>
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <QRCodeCanvas
+                    value={window.location.origin}
+                    size={128}
+                    bgColor="#ffffff"
+                    fgColor="#1e40af"
+                    level="H"
+                    includeMargin={true}
+                  />
+                  <div className="font-medium text-xs sm:text-sm break-all">
+                    {window.location.origin}
+                  </div>
+                </div>
               </div>
             </div>
           </StatusCard>
@@ -441,26 +454,6 @@ const SystemMonitor = () => {
                 <div className="text-xs text-gray-500 mt-1">
                   Auto-refresh every second
                 </div>
-              </div>
-            </div>
-          </StatusCard>
-        </div>
-
-        {/* Detailed Information Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-          {/* QR Code for App URL */}
-          <StatusCard title="App QR Code" icon={QrCode}>
-            <div className="flex flex-col items-center justify-center">
-              <QRCodeCanvas
-                value={window.location.origin}
-                size={128}
-                bgColor="#ffffff"
-                fgColor="#1e40af"
-                level="H"
-                includeMargin={true}
-              />
-              <div className="mt-2 text-xs text-gray-600 break-all text-center">
-                {window.location.origin}
               </div>
             </div>
           </StatusCard>

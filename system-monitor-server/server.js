@@ -283,37 +283,71 @@ function getNetworkInfo() {
 function getDiskUsage() {
   try {
     // Try to use 'df' on the host root filesystem
+    // Try to read directly from /host/proc/mounts and /host/proc/self/mountinfo
+    if (fs.existsSync('/host/proc/mounts') && fs.existsSync('/host/proc/self/stat')) {
+      // Find the root filesystem device
+      const mounts = fs.readFileSync('/host/proc/mounts', 'utf8').split('\n');
+      let rootDevice = null;
+      for (let line of mounts) {
+      const parts = line.split(' ');
+      if (parts[1] === '/' || parts[1] === '/host') {
+        rootDevice = parts[0];
+        break;
+      }
+      }
+      if (rootDevice && fs.existsSync(`/host/sys/block`)) {
+      // Try to find the block device stats
+      const deviceName = rootDevice.replace('/dev/', '').replace(/[0-9]+$/, '');
+      const statPath = `/host/sys/block/${deviceName}/stat`;
+      const sizePath = `/host/sys/block/${deviceName}/size`;
+      const sectorSizePath = `/host/sys/block/${deviceName}/queue/hw_sector_size`;
+      if (fs.existsSync(sizePath) && fs.existsSync(sectorSizePath)) {
+        const sectors = parseInt(fs.readFileSync(sizePath, 'utf8').trim(), 10);
+        const sectorSize = parseInt(fs.readFileSync(sectorSizePath, 'utf8').trim(), 10);
+        const totalBytes = sectors * sectorSize;
+        // Used/available not available from sysfs, so fallback to statvfs if possible
+        try {
+        const stat = fs.statSync('/host');
+        // Not portable, but can try to use statvfs via a native addon or fallback to df
+        } catch {}
+        return {
+        total: Math.round(totalBytes / 1024 / 1024 / 1024 * 100) / 100,
+        used: 'N/A',
+        available: 'N/A',
+        usage: 0
+        };
+      }
+      }
+    }
+    // Fallback to df if above fails
     if (fs.existsSync('/host/bin/df')) {
-      // Use the host's df binary if available
       const output = execSync('/host/bin/df -k /host', { encoding: 'utf8' });
       const lines = output.trim().split('\n');
       if (lines.length > 1) {
-        const parts = lines[1].split(/\s+/);
-        // parts: [Filesystem, 1K-blocks, Used, Available, Use%, Mounted on]
-        return {
-          total: Math.round(parseInt(parts[1], 10) / 1024 / 1024 * 100) / 100, // GB
-          used: Math.round(parseInt(parts[2], 10) / 1024 / 1024 * 100) / 100,  // GB
-          available: Math.round(parseInt(parts[3], 10) / 1024 / 1024 * 100) / 100, // GB
-          usage: parseFloat(parts[4].replace('%', ''))
-        };
+      const parts = lines[1].split(/\s+/);
+      return {
+        total: Math.round(parseInt(parts[1], 10) / 1024 / 1024 * 100) / 100, // GB
+        used: Math.round(parseInt(parts[2], 10) / 1024 / 1024 * 100) / 100,  // GB
+        available: Math.round(parseInt(parts[3], 10) / 1024 / 1024 * 100) / 100, // GB
+        usage: parseFloat(parts[4].replace('%', ''))
+      };
       }
     } else {
-      // Fallback: try using container's df on /host or /
       let output;
       try {
-        output = execSync('df -k /host', { encoding: 'utf8' });
+      output = execSync('df -k /host', { encoding: 'utf8' });
       } catch {
-        output = execSync('df -k /', { encoding: 'utf8' });
+      output = execSync('df -k /', { encoding: 'utf8' });
       }
       const lines = output.trim().split('\n');
       if (lines.length > 1) {
-        const parts = lines[1].split(/\s+/);
-        return {
-          total: Math.round(parseInt(parts[1], 10) / 1024 / 1024 * 100) / 100, // GB
-          used: Math.round(parseInt(parts[2], 10) / 1024 / 1024 * 100) / 100,  // GB
-          available: Math.round(parseInt(parts[3], 10) / 1024 / 1024 * 100) / 100, // GB
-          usage: parseFloat(parts[4].replace('%', ''))
-        };
+      const parts = lines[1].split(/\s+/);
+      return {
+        total: Math.round(parseInt(parts[1], 10) / 1024 / 1024 * 100) / 100, // GB
+        used: Math.round(parseInt(parts[2], 10) / 1024 / 1024 * 100) / 100,  // GB
+        available: Math.round(parseInt(parts[3], 10) / 1024 / 1024 * 100) / 100, // GB
+        usage: parseFloat(parts[4].replace('%', ''))
+      };
       }
     }
   } catch (error) {
