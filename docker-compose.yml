@@ -9,13 +9,14 @@ services:
       - "3000:3000"
     depends_on:
       - backend
+    restart: unless-stopped
 
   backend:
     build:
       context: ./system-monitor-server
       dockerfile: Dockerfile
     ports:
-      - "5000:8080"
+      - "5001:8080"
     environment:
       - NODE_ENV=production
     volumes:
@@ -25,6 +26,8 @@ services:
       - /etc:/host/etc:ro
       - /bin:/host/bin:ro
       - /:/host:ro
+    privileged: true
+    restart: unless-stopped
 
 networks:
   default:

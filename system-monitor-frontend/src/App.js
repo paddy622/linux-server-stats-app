@@ -19,7 +19,7 @@ const SystemMonitor = () => {
 
   useEffect(() => {
     // WebSocket connection
-    const websocket = new WebSocket(`ws://${window.location.hostname}:5000`);
+    const websocket = new WebSocket(`ws://${window.location.hostname}:5001`);
 
     websocket.onopen = () => {
       console.log("Connected to WebSocket server");
@@ -198,8 +198,8 @@ const SystemMonitor = () => {
                   systemData.cpu.usage > 80
                     ? "red"
                     : systemData.cpu.usage > 60
-                    ? "yellow"
-                    : "green"
+                      ? "yellow"
+                      : "green"
                 }
               />
               <div className="mt-2 sm:mt-3 space-y-1">
@@ -208,19 +208,18 @@ const SystemMonitor = () => {
                 </p>
                 <div className="flex justify-center">
                   <span
-                    className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-                      systemData.cpu.usage > 80
-                        ? "bg-red-100 text-red-800"
-                        : systemData.cpu.usage > 60
+                    className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${systemData.cpu.usage > 80
+                      ? "bg-red-100 text-red-800"
+                      : systemData.cpu.usage > 60
                         ? "bg-yellow-100 text-yellow-800"
                         : "bg-green-100 text-green-800"
-                    }`}
+                      }`}
                   >
                     {systemData.cpu.usage > 80
                       ? "High"
                       : systemData.cpu.usage > 60
-                      ? "Medium"
-                      : "Low"}
+                        ? "Medium"
+                        : "Low"}
                   </span>
                 </div>
               </div>
@@ -236,8 +235,8 @@ const SystemMonitor = () => {
                   systemData.memory.usage > 80
                     ? "red"
                     : systemData.memory.usage > 60
-                    ? "yellow"
-                    : "green"
+                      ? "yellow"
+                      : "green"
                 }
               />
               <div className="mt-2 sm:mt-3 space-y-1">
@@ -246,13 +245,12 @@ const SystemMonitor = () => {
                 </p>
                 <div className="flex justify-center">
                   <span
-                    className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-                      systemData.memory.usage > 80
-                        ? "bg-red-100 text-red-800"
-                        : systemData.memory.usage > 60
+                    className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${systemData.memory.usage > 80
+                      ? "bg-red-100 text-red-800"
+                      : systemData.memory.usage > 60
                         ? "bg-yellow-100 text-yellow-800"
                         : "bg-green-100 text-green-800"
-                    }`}
+                      }`}
                   >
                     {systemData.memory.free}GB free
                   </span>
@@ -270,8 +268,8 @@ const SystemMonitor = () => {
                   systemData.disk.usage > 80
                     ? "red"
                     : systemData.disk.usage > 60
-                    ? "yellow"
-                    : "green"
+                      ? "yellow"
+                      : "green"
                 }
               />
               <div className="mt-2 sm:mt-3 space-y-1">
@@ -280,13 +278,12 @@ const SystemMonitor = () => {
                 </p>
                 <div className="flex justify-center">
                   <span
-                    className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-                      systemData.disk.usage > 80
-                        ? "bg-red-100 text-red-800"
-                        : systemData.disk.usage > 60
+                    className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${systemData.disk.usage > 80
+                      ? "bg-red-100 text-red-800"
+                      : systemData.disk.usage > 60
                         ? "bg-yellow-100 text-yellow-800"
                         : "bg-green-100 text-green-800"
-                    }`}
+                      }`}
                   >
                     {systemData.disk.available} free
                   </span>
@@ -307,19 +304,18 @@ const SystemMonitor = () => {
                   </div>
                   <div className="flex justify-center">
                     <span
-                      className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-                        systemData.temperature.cpu > 70
-                          ? "bg-red-100 text-red-800"
-                          : systemData.temperature.cpu > 50
+                      className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${systemData.temperature.cpu > 70
+                        ? "bg-red-100 text-red-800"
+                        : systemData.temperature.cpu > 50
                           ? "bg-yellow-100 text-yellow-800"
                           : "bg-green-100 text-green-800"
-                      }`}
+                        }`}
                     >
                       {systemData.temperature.cpu > 70
                         ? "Hot"
                         : systemData.temperature.cpu > 50
-                        ? "Warm"
-                        : "Normal"}
+                          ? "Warm"
+                          : "Normal"}
                     </span>
                   </div>
                 </>
@@ -385,9 +381,7 @@ const SystemMonitor = () => {
             <div className="space-y-3">
               <div className="bg-blue-50 rounded-lg p-3">
                 <div className="flex items-center justify-between">
-                  <div className="text-xs text-blue-600 mb-1">
-                    System Uptime
-                  </div>
+                  <div className="text-xs text-blue-600 mb-1">System Uptime</div>
                   <Clock className="w-4 h-4 text-blue-500" />
                 </div>
                 <div className="font-medium text-sm sm:text-base text-blue-800">
@@ -400,17 +394,64 @@ const SystemMonitor = () => {
                   Network Interfaces
                 </div>
                 {systemData.network.map((iface, index) => (
-                  <div key={index} className="bg-gray-50 rounded-lg p-3">
+                  <div key={index} className="bg-gray-50 rounded-lg p-3 space-y-2">
+                    {/* Interface Header */}
                     <div className="flex justify-between items-start">
-                      <div>
-                        <div className="text-xs text-gray-500">
-                          {iface.interface}
-                        </div>
-                        <div className="font-medium text-sm break-all">
-                          {iface.ip}
+                      <div className="flex items-center space-x-2">
+                        <div className="font-medium text-sm">{iface.interface}</div>
+                        <div className={`px-2 py-0.5 rounded-full text-xs ${iface.state === 'up'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-red-100 text-red-800'
+                          }`}>
+                          {iface.state}
                         </div>
                       </div>
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <div className={`w-2 h-2 rounded-full ${iface.state === 'up' ? 'bg-green-500' : 'bg-red-500'
+                        }`}></div>
+                    </div>
+
+                    {/* MAC Address */}
+                    <div className="text-xs text-gray-500">
+                      MAC: <span className="font-mono">{iface.mac}</span>
+                    </div>
+
+                    {/* IP Addresses */}
+                    <div className="space-y-1">
+                      {iface.addresses.map((addr, idx) => (
+                        <div key={idx} className="flex items-center space-x-2">
+                          <span className={`px-1.5 py-0.5 rounded text-xs ${addr.type === 'ipv4'
+                            ? 'bg-blue-100 text-blue-800'
+                            : 'bg-purple-100 text-purple-800'
+                            }`}>
+                            {addr.type.toUpperCase()}
+                          </span>
+                          <span className="text-sm font-mono">{addr.address}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Network Statistics */}
+                    <div className="grid grid-cols-3 gap-2 mt-2">
+                      <div className="bg-gray-100 rounded p-2">
+                        <div className="text-xs text-gray-500">Received</div>
+                        <div className="text-sm font-medium">
+                          {(iface.statistics.rxBytes / (1024 * 1024)).toFixed(2)} MB
+                        </div>
+                      </div>
+                      <div className="bg-gray-100 rounded p-2">
+                        <div className="text-xs text-gray-500">Transmitted</div>
+                        <div className="text-sm font-medium">
+                          {(iface.statistics.txBytes / (1024 * 1024)).toFixed(2)} MB
+                        </div>
+                      </div>
+                      <div className="bg-gray-100 rounded p-2">
+                        <div className="text-xs text-gray-500">Speed</div>
+                        <div className="text-sm font-medium">
+                          {iface.statistics.rxMbps
+                            ? `${iface.statistics.rxMbps} Mbps`
+                            : 'N/A'}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ))}
