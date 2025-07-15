@@ -345,8 +345,8 @@ function getUptime() {
 
 function getDiskUsage() {
   try {
-    const output = execSync('df -B1 /host/', { encoding: 'utf8' });
-    console.error('Disk usage output :', output);
+    // Just get root filesystem usage
+    const output = execSync('df -B1 /', { encoding: 'utf8' });
     const lines = output.trim().split('\n');
     const parts = lines[1].split(/\s+/);
 
@@ -355,15 +355,30 @@ function getDiskUsage() {
     const available = parseInt(parts[3]);
     const usage = parseFloat(parts[4].replace('%', ''));
 
-    return {
-      total: Math.round(total / 1024 / 1024 / 1024 * 100) / 100,
-      used: Math.round(used / 1024 / 1024 / 1024 * 100) / 100,
-      available: Math.round(available / 1024 / 1024 / 1024 * 100) / 100,
-      usage: usage
+    const filesystem = {
+      device: parts[0],
+      mountpoint: parts[5],
+      total,
+      used,
+      available,
+      usage,
+      total_gb: Math.round(total / 1024 / 1024 / 1024 * 100) / 100,
+      used_gb: Math.round(used / 1024 / 1024 / 1024 * 100) / 100,
+      available_gb: Math.round(available / 1024 / 1024 / 1024 * 100) / 100
     };
+
+    return {
+      filesystems: [filesystem],
+      total: filesystem.total_gb,
+      used: filesystem.used_gb,
+      available: filesystem.available_gb,
+      usage: filesystem.usage
+    };
+
   } catch (error) {
     console.error('Disk usage error:', error.message);
     return {
+      filesystems: [],
       total: 0,
       used: 0,
       available: 0,
@@ -430,7 +445,7 @@ wss.on('connection', (ws) => {
   sendSystemInfo();
 
   // Send updates every second
-  const interval = setInterval(sendSystemInfo, 1000);
+  const interval = setInterval(sendSystemInfo, 5000);
 
   ws.on('close', () => {
     console.log('Client disconnected');
