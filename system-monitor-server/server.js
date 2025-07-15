@@ -40,6 +40,79 @@ function getCpuUsage() {
   }
 }
 
+// Add this new function after the other monitoring functions
+function getBatteryInfo() {
+  try {
+    const batteryPath = `${HOST_SYS}/class/power_supply`;
+    const batteries = [];
+
+    // Check if the power_supply directory exists
+    if (!fs.existsSync(batteryPath)) {
+      return null;
+    }
+
+    // Read all power supply devices
+    const devices = fs.readdirSync(batteryPath);
+
+    for (const device of devices) {
+      // Only process battery devices (usually starts with BAT)
+      if (device.startsWith('BAT')) {
+        const basePath = `${batteryPath}/${device}`;
+
+        try {
+          const status = fs.readFileSync(`${basePath}/status`, 'utf8').trim();
+          const capacity = parseInt(fs.readFileSync(`${basePath}/capacity`, 'utf8').trim());
+
+          // Try to get additional information
+          let technology = 'Unknown';
+          let voltage = null;
+          let current = null;
+          let powerNow = null;
+          let energyFull = null;
+          let energyNow = null;
+
+          try { technology = fs.readFileSync(`${basePath}/technology`, 'utf8').trim(); } catch (e) { }
+          try { voltage = parseInt(fs.readFileSync(`${basePath}/voltage_now`, 'utf8').trim()) / 1000000; } catch (e) { }
+          try { current = parseInt(fs.readFileSync(`${basePath}/current_now`, 'utf8').trim()) / 1000000; } catch (e) { }
+          try { powerNow = parseInt(fs.readFileSync(`${basePath}/power_now`, 'utf8').trim()) / 1000000; } catch (e) { }
+          try { energyFull = parseInt(fs.readFileSync(`${basePath}/energy_full`, 'utf8').trim()) / 1000000; } catch (e) { }
+          try { energyNow = parseInt(fs.readFileSync(`${basePath}/energy_now`, 'utf8').trim()) / 1000000; } catch (e) { }
+
+          // Calculate time remaining (in hours)
+          let timeRemaining = null;
+          if (powerNow && energyNow) {
+            if (status === 'Discharging') {
+              timeRemaining = energyNow / powerNow;
+            } else if (status === 'Charging' && energyFull) {
+              timeRemaining = (energyFull - energyNow) / powerNow;
+            }
+          }
+
+          batteries.push({
+            name: device,
+            status: status,
+            percentage: capacity,
+            technology: technology,
+            voltage: voltage,
+            current: current,
+            power: powerNow,
+            energyFull: energyFull,
+            energyNow: energyNow,
+            timeRemaining: timeRemaining ? parseFloat(timeRemaining.toFixed(2)) : null
+          });
+        } catch (error) {
+          console.error(`Error reading battery ${device}:`, error.message);
+        }
+      }
+    }
+
+    return batteries.length > 0 ? batteries : null;
+  } catch (error) {
+    console.error('Battery info error:', error.message);
+    return null;
+  }
+}
+
 function getMemoryUsage() {
   try {
     const meminfo = fs.readFileSync(`${HOST_PROC}/meminfo`, 'utf8');
@@ -299,7 +372,8 @@ function getSystemInfo() {
     uptime: getUptime(),
     network: getNetworkInfo(),
     disk: getDiskUsage(),
-    loadavg: getLoadAverage()
+    loadavg: getLoadAverage(),
+    battery: getBatteryInfo()
   };
 }
 
