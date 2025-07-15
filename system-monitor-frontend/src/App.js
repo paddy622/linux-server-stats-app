@@ -274,7 +274,7 @@ const SystemMonitor = () => {
               />
               <div className="mt-2 sm:mt-3 space-y-1">
                 <p className="text-xs sm:text-sm text-gray-600">
-                  {systemData.disk.used} / {systemData.disk.total}
+                  {systemData.disk.used} GB / {systemData.disk.total} GB
                 </p>
                 <div className="flex justify-center">
                   <span
@@ -285,7 +285,7 @@ const SystemMonitor = () => {
                         : "bg-green-100 text-green-800"
                       }`}
                   >
-                    {systemData.disk.available} free
+                    {systemData.disk.available} GB free
                   </span>
                 </div>
               </div>
@@ -614,14 +614,14 @@ const SystemMonitor = () => {
                             </div>
 
                             {/* Created */}
-                            <div className="bg-white rounded-lg p-3 border border-gray-100">
+                            {/* <div className="bg-white rounded-lg p-3 border border-gray-100">
                               <div className="text-xs font-medium text-gray-500 mb-1">
                                 Created
                               </div>
                               <div className="text-sm">
                                 {new Date(container.created).toLocaleString()}
                               </div>
-                            </div>
+                            </div>*/}
                           </div>
 
                           {/* Right Column */}
@@ -637,24 +637,24 @@ const SystemMonitor = () => {
                             </div>
 
                             {/* Networks */}
-                            <div className="bg-white rounded-lg p-3 border border-gray-100">
-                              <div className="text-xs font-medium text-gray-500 mb-1">
-                                Networks
-                              </div>
-                              <div className="text-sm font-mono break-all">
-                                {container.networks || 'No network info'}
-                              </div>
-                            </div>
+                            {/* <div className="bg-white rounded-lg p-3 border border-gray-100">
+                                <div className="text-xs font-medium text-gray-500 mb-1">
+                                  Networks
+                                </div>
+                                <div className="text-sm font-mono break-all">
+                                  {container.networks || 'No network info'}
+                                </div>
+                              </div> */}
 
                             {/* Size */}
-                            <div className="bg-white rounded-lg p-3 border border-gray-100">
-                              <div className="text-xs font-medium text-gray-500 mb-1">
-                                Size
-                              </div>
-                              <div className="text-sm">
-                                {container.size || 'N/A'}
-                              </div>
-                            </div>
+                            {/* <div className="bg-white rounded-lg p-3 border border-gray-100">
+                                <div className="text-xs font-medium text-gray-500 mb-1">
+                                  Size
+                                </div>
+                                <div className="text-sm">
+                                  {container.size || 'N/A'}
+                                </div>
+                              </div> */}
                           </div>
                         </div>
 
@@ -690,7 +690,7 @@ const SystemMonitor = () => {
                   {new Date(systemData.timestamp).toLocaleTimeString()}
                 </div>
                 <div className="text-xs text-gray-500 mt-1">
-                  Auto-refresh every second
+                  Auto-refresh every 5 seconds
                 </div>
               </div>
             </div>
