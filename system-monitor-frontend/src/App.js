@@ -519,7 +519,7 @@ const SystemMonitor = () => {
 
           {/* Load Average & Stats */}
           <StatusCard
-            title="Load Average"
+            title="Load Average & Stats"
             icon={Activity}
             className="lg:col-span-2 xl:col-span-1"
           >
@@ -542,6 +542,145 @@ const SystemMonitor = () => {
                     {systemData.loadavg["15min"]}
                   </div>
                   <div className="text-xs text-purple-500">15 min</div>
+                </div>
+              </div>
+
+              {/* Docker Containers Section */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="text-sm font-medium text-gray-700">Docker Containers</div>
+                  <div className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                    {systemData.docker?.length || 0} containers
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  {systemData.docker && systemData.docker.length > 0 ? (
+                    systemData.docker.map((container) => (
+                      <div
+                        key={container.id}
+                        className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors border border-gray-200"
+                      >
+                        {/* Container Header */}
+                        <div className="flex justify-between items-start mb-3">
+                          <div className="space-y-1">
+                            <div className="flex items-center space-x-2">
+                              <span className="font-medium text-base text-gray-900">
+                                {container.name}
+                              </span>
+                              <span
+                                className={`px-2 py-0.5 rounded-full text-xs font-medium ${container.state === 'running'
+                                  ? 'bg-green-100 text-green-800'
+                                  : 'bg-red-100 text-red-800'
+                                  }`}
+                              >
+                                {container.state}
+                              </span>
+                            </div>
+                            <div className="text-sm text-gray-500 font-mono">
+                              ID: {container.id.slice(0, 12)}
+                            </div>
+                          </div>
+                          <div
+                            className={`w-3 h-3 rounded-full ${container.state === 'running'
+                              ? 'bg-green-500'
+                              : 'bg-red-500'
+                              }`}
+                          ></div>
+                        </div>
+
+                        {/* Container Details Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {/* Left Column */}
+                          <div className="space-y-3">
+                            {/* Image */}
+                            <div className="bg-white rounded-lg p-3 border border-gray-100">
+                              <div className="text-xs font-medium text-gray-500 mb-1">
+                                Image
+                              </div>
+                              <div className="text-sm font-mono break-all">
+                                {container.image}
+                              </div>
+                            </div>
+
+                            {/* Status */}
+                            <div className="bg-white rounded-lg p-3 border border-gray-100">
+                              <div className="text-xs font-medium text-gray-500 mb-1">
+                                Status
+                              </div>
+                              <div className="text-sm">
+                                {container.status}
+                              </div>
+                            </div>
+
+                            {/* Created */}
+                            <div className="bg-white rounded-lg p-3 border border-gray-100">
+                              <div className="text-xs font-medium text-gray-500 mb-1">
+                                Created
+                              </div>
+                              <div className="text-sm">
+                                {new Date(container.created).toLocaleString()}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Right Column */}
+                          <div className="space-y-3">
+                            {/* Ports */}
+                            <div className="bg-white rounded-lg p-3 border border-gray-100">
+                              <div className="text-xs font-medium text-gray-500 mb-1">
+                                Ports
+                              </div>
+                              <div className="text-sm font-mono break-all">
+                                {container.ports || 'No ports exposed'}
+                              </div>
+                            </div>
+
+                            {/* Networks */}
+                            <div className="bg-white rounded-lg p-3 border border-gray-100">
+                              <div className="text-xs font-medium text-gray-500 mb-1">
+                                Networks
+                              </div>
+                              <div className="text-sm font-mono break-all">
+                                {container.networks || 'No network info'}
+                              </div>
+                            </div>
+
+                            {/* Size */}
+                            <div className="bg-white rounded-lg p-3 border border-gray-100">
+                              <div className="text-xs font-medium text-gray-500 mb-1">
+                                Size
+                              </div>
+                              <div className="text-sm">
+                                {container.size || 'N/A'}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Container Actions */}
+                        <div className="mt-4 pt-3 border-t border-gray-200">
+                          <div className="flex space-x-2">
+                            <span className="px-2 py-1 bg-gray-100 rounded-md text-xs text-gray-600">
+                              {container.state === 'running' ? 'Running since' : 'Stopped since'}: {
+                                container.status.includes('Up') || container.status.includes('Exited')
+                                  ? container.status.split(' ')[1] + ' ' + container.status.split(' ')[2]
+                                  : 'Unknown'
+                              }
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
+                      <div className="text-gray-500">
+                        <Server className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                        <div className="text-sm font-medium">No containers running</div>
+                        <div className="text-xs mt-1">Start a container to see it listed here</div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 

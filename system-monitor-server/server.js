@@ -154,6 +154,44 @@ function getMemoryUsage() {
   }
 }
 
+function getDockerContainers() {
+  try {
+    // Execute docker command and get output in JSON format
+    const stdout = execSync('docker ps --format "{{json .}}"', { encoding: 'utf8' });
+
+    // Split the output into lines and parse each line as JSON
+    return stdout
+      .trim()
+      .split('\n')
+      .filter(line => line.length > 0)
+      .map(line => {
+        try {
+          const container = JSON.parse(line);
+          return {
+            id: container.ID,
+            image: container.Image,
+            status: container.Status,
+            name: container.Names,
+            ports: container.Ports || 'No ports exposed',
+            created: container.CreatedAt,
+            size: container.Size,
+            state: container.State || (container.Status.toLowerCase().includes('up') ? 'running' : 'stopped'),
+            networks: container.Networks
+          };
+        } catch (parseError) {
+          console.error('Error parsing container data:', parseError.message);
+          return null;
+        }
+      })
+      .filter(container => container !== null); // Remove any failed parsing results
+
+  } catch (error) {
+    console.error('Docker containers error:', error.message);
+    return [];
+  }
+}
+
+
 function getTemperature() {
   try {
     // Try different temperature sources on host system
@@ -308,6 +346,7 @@ function getUptime() {
 function getDiskUsage() {
   try {
     const output = execSync('df -B1 /host/', { encoding: 'utf8' });
+    console.error('Disk usage output :', output);
     const lines = output.trim().split('\n');
     const parts = lines[1].split(/\s+/);
 
@@ -373,7 +412,8 @@ function getSystemInfo() {
     network: getNetworkInfo(),
     disk: getDiskUsage(),
     loadavg: getLoadAverage(),
-    battery: getBatteryInfo()
+    battery: getBatteryInfo(),
+    docker: getDockerContainers()
   };
 }
 
