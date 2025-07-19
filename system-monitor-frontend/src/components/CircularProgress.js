@@ -28,7 +28,7 @@ const CircularProgress = ({
                     stroke="currentColor"
                     strokeWidth={strokeWidth}
                     fill="transparent"
-                    className="text-gray-200"
+                    className="text-gray-200 dark:text-gray-600"
                 />
                 <circle
                     cx={size / 2}
@@ -44,7 +44,7 @@ const CircularProgress = ({
                 />
             </svg>
             <div className="absolute text-center">
-                <div className="text-lg sm:text-xl font-bold">{value}%</div>
+                <div className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">{value}%</div>
             </div>
         </div>
     );
