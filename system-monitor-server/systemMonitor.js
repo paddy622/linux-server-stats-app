@@ -427,6 +427,37 @@ function getSystemInfo() {
     };
 }
 
+function getStaticSystemInfo() {
+    const cpuInfo = getCpuUsage();
+    return {
+        hostname: getHostname(),
+        platform: 'Linux',
+        arch: os.arch(),
+        cpu: {
+            model: cpuInfo.model,
+            cores: cpuInfo.cores
+        }
+    };
+}
+
+function getDynamicSystemInfo() {
+    const cpuInfo = getCpuUsage();
+    return {
+        timestamp: Date.now(),
+        cpu: {
+            usage: cpuInfo.usage
+        },
+        memory: getMemoryUsage(),
+        temperature: getTemperature(),
+        uptime: getUptime(),
+        network: getNetworkInfo(),
+        disk: getDiskUsage(),
+        loadavg: getLoadAverage(),
+        battery: getBatteryInfo(),
+        docker: getDockerContainers()
+    };
+}
+
 module.exports = {
     getCpuUsage,
     getBatteryInfo,
@@ -438,5 +469,7 @@ module.exports = {
     getDiskUsage,
     getLoadAverage,
     getHostname,
-    getSystemInfo
+    getSystemInfo,
+    getStaticSystemInfo,
+    getDynamicSystemInfo
 };
