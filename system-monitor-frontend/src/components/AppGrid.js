@@ -14,8 +14,7 @@ const AppGrid = ({
             port: 9443,
             path: '',
             protocol: 'https', // Use HTTPS for Portainer
-            description: 'Docker container management',
-            icon: null // Will show generic globe icon
+            description: 'Docker container management'
         },
         {
             name: 'Immich',
@@ -23,7 +22,6 @@ const AppGrid = ({
             path: '',
             protocol: 'http', // Use HTTP for Immich
             description: 'Photo Backup',
-            icon: null // Will show generic globe icon
         },
         {
             name: 'Pi-hole',
@@ -31,7 +29,6 @@ const AppGrid = ({
             path: '/admin',
             protocol: 'http', // Use HTTP for Pi-hole
             description: 'Network-wide ad blocking',
-            icon: null // Will show generic globe icon
         },
         {
             name: 'Samba',

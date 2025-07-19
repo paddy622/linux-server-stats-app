@@ -25,7 +25,8 @@ const AppTile = ({
     }
 
     // Don't use favicon.ico by default, use null to show generic icon
-    const faviconUrl = icon; // Only use custom icon if explicitly provided
+    const faviconUrl = icon || `${protocol}://${resolvedHostname}:${port}/favicon.ico`;
+
 
     const handleIconError = () => {
         setIconError(true);
