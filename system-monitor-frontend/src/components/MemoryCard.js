@@ -25,16 +25,16 @@ const MemoryCard = ({ memoryData, timestamp, isPaused = false }) => (
                         }
                     />
                     <div className="mt-2 sm:mt-3 space-y-1">
-                        <p className="text-xs sm:text-sm text-gray-600">
-                            {memoryData.used}GB / {memoryData.total}GB
+                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                            {memoryData.used}GB / {memoryData.total}GB used
                         </p>
                         <div className="flex justify-center">
                             <span
                                 className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${memoryData.usage > 80
-                                    ? "bg-red-100 text-red-800"
+                                    ? "bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-400"
                                     : memoryData.usage > 60
-                                        ? "bg-yellow-100 text-yellow-800"
-                                        : "bg-green-100 text-green-800"
+                                        ? "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-400"
+                                        : "bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-400"
                                     }`}
                             >
                                 {memoryData.free}GB free
@@ -45,7 +45,7 @@ const MemoryCard = ({ memoryData, timestamp, isPaused = false }) => (
             ) : (
                 <div className="py-8">
                     <CardSpinner />
-                    <p className="text-xs text-gray-500 mt-2">Loading memory data...</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Loading memory data...</p>
                 </div>
             )}
         </div>

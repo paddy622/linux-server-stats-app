@@ -69,12 +69,12 @@ const AppCard = ({ app, hostname, index }) => {
     return (
         <div
             key={`${app.name}-${app.port}-${index}`}
-            className="bg-gradient-to-br from-gray-50 to-white rounded-lg p-4 border border-gray-100 hover:border-blue-300 hover:shadow-md transition-all duration-200 cursor-pointer group"
+            className="bg-gradient-to-br from-gray-50 to-white dark:from-gray-700 dark:to-gray-600 rounded-lg p-4 border border-gray-100 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-500 hover:shadow-md transition-all duration-200 cursor-pointer group"
             onClick={handleClick}
         >
             <div className="flex flex-col items-center text-center space-y-3">
                 {/* App Icon */}
-                <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center overflow-hidden">
+                <div className="w-12 h-12 rounded-lg bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center overflow-hidden">
                     {faviconUrl && !iconError ? (
                         <>
                             {iconLoading && (
@@ -103,39 +103,39 @@ const AppCard = ({ app, hostname, index }) => {
 
                 {/* App Name */}
                 <div>
-                    <h3 className="font-semibold text-gray-900 text-sm group-hover:text-blue-600 transition-colors">
+                    <h3 className="font-semibold text-gray-900 dark:text-white text-sm group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                         {app.name}
                     </h3>
-                    <p className="text-xs text-gray-500 mt-1 line-clamp-2">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
                         {app.description}
                     </p>
                 </div>
 
                 {/* Port/Protocol Info */}
                 <div className="flex items-center justify-center space-x-2">
-                    <span className="text-xs text-gray-400 font-mono">
+                    <span className="text-xs text-gray-400 dark:text-gray-500 font-mono">
                         {app.protocol === 'smb' ? 'SMB' : `:${app.port}`}
                     </span>
                     <div className="flex items-center space-x-1">
                         <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                        <span className="text-xs text-green-600">Active</span>
+                        <span className="text-xs text-green-600 dark:text-green-400">Active</span>
                     </div>
                 </div>
 
                 {/* Protocol Badge */}
                 <div className="w-full">
                     {app.protocol === 'https' && (
-                        <span className="inline-block px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
+                        <span className="inline-block px-2 py-1 bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-400 rounded-full text-xs font-medium">
                             HTTPS
                         </span>
                     )}
                     {app.protocol === 'http' && (
-                        <span className="inline-block px-2 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-medium">
+                        <span className="inline-block px-2 py-1 bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-400 rounded-full text-xs font-medium">
                             HTTP
                         </span>
                     )}
                     {app.protocol === 'smb' && (
-                        <span className="inline-block px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+                        <span className="inline-block px-2 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-400 rounded-full text-xs font-medium">
                             SMB
                         </span>
                     )}
@@ -187,21 +187,21 @@ const HorizontalAppCards = ({
     const appList = apps.length > 0 ? apps : defaultApps;
 
     return (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-6">
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-2">
                     <Grid3X3 className="w-5 h-5 text-blue-500" />
-                    <h2 className="text-lg font-semibold text-gray-800">Hosted Applications</h2>
+                    <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Hosted Applications</h2>
                 </div>
                 <div className="flex items-center space-x-3">
-                    <div className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">
+                    <div className="px-3 py-1 bg-blue-50 dark:bg-blue-900/50 text-blue-700 dark:text-blue-400 rounded-full text-sm font-medium">
                         {appList.length} apps
                     </div>
                     {showAddButton && onAddApp && (
                         <button
                             onClick={onAddApp}
-                            className="flex items-center space-x-1 px-3 py-1 border border-gray-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-colors text-sm"
+                            className="flex items-center space-x-1 px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-lg hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-sm text-gray-700 dark:text-gray-300"
                         >
                             <Plus className="w-4 h-4" />
                             <span>Add App</span>
@@ -223,8 +223,8 @@ const HorizontalAppCards = ({
             </div>
 
             {/* Quick Actions Footer */}
-            <div className="flex items-center justify-center pt-4 border-t border-gray-100 mt-4">
-                <button className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
+            <div className="flex items-center justify-center pt-4 border-t border-gray-100 dark:border-gray-700 mt-4">
+                <button className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors">
                     <Settings className="w-4 h-4" />
                     <span>Manage Applications</span>
                 </button>

@@ -65,7 +65,7 @@ const SystemMonitor = () => {
 
   // Show static data immediately, dynamic cards will show loading individually
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-3 sm:p-4 lg:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-blue-900 p-3 sm:p-4 lg:p-6 transition-colors duration-300">
       <div className="max-w-7xl mx-auto">
         {/* Header - Shows static data and connection status */}
         <Header
@@ -120,8 +120,8 @@ const SystemMonitor = () => {
 
         {/* Disk Usage Section - Separate row for multiple disks */}
         <div className="mb-6 sm:mb-8">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-            <span className="text-blue-500 mr-2">💾</span>
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center">
+            <span className="text-blue-500 dark:text-blue-400 mr-2">💾</span>
             Storage Devices
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
@@ -157,41 +157,41 @@ const SystemMonitor = () => {
           <Accordion title="🛠️ Debug & Developer Tools" defaultOpen={false}>
             <div className="space-y-4">
               {/* Connection Status */}
-              <div className="bg-gray-50 p-3 rounded-lg">
-                <h3 className="text-sm font-semibold text-gray-700 mb-2">Connection Status</h3>
+              <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg">
+                <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Connection Status</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
                   <div className="flex justify-between">
-                    <span>Static Data:</span>
-                    <span className={staticData ? 'text-green-600' : 'text-red-600'}>
+                    <span className="dark:text-gray-300">Static Data:</span>
+                    <span className={staticData ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}>
                       {staticData ? '✅ Loaded' : '❌ Missing'}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Dynamic Data:</span>
-                    <span className={dynamicData ? 'text-green-600' : 'text-red-600'}>
+                    <span className="dark:text-gray-300">Dynamic Data:</span>
+                    <span className={dynamicData ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}>
                       {dynamicData ? '✅ Connected' : '❌ Waiting'}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span>WebSocket:</span>
+                    <span className="dark:text-gray-300">WebSocket:</span>
                     <span className={
-                      connected ? 'text-green-600' :
-                        reconnecting ? 'text-yellow-600' : 'text-red-600'
+                      connected ? 'text-green-600 dark:text-green-400' :
+                        reconnecting ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-600 dark:text-red-400'
                     }>
                       {connected ? '🟢 Connected' : reconnecting ? '🟡 Reconnecting' : '🔴 Disconnected'}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Environment:</span>
-                    <span className="text-blue-600">{process.env.NODE_ENV || 'development'}</span>
+                    <span className="dark:text-gray-300">Environment:</span>
+                    <span className="text-blue-600 dark:text-blue-400">{process.env.NODE_ENV || 'development'}</span>
                   </div>
                 </div>
               </div>
 
               {/* Server Configuration */}
-              <div className="bg-blue-50 p-3 rounded-lg">
-                <h3 className="text-sm font-semibold text-gray-700 mb-2">Server Configuration</h3>
-                <div className="text-xs space-y-1">
+              <div className="bg-blue-50 dark:bg-blue-900/50 p-3 rounded-lg">
+                <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Server Configuration</h3>
+                <div className="text-xs space-y-1 dark:text-gray-300">
                   <div><span className="font-medium">Static API:</span> {baseUrl}/api/static</div>
                   <div><span className="font-medium">WebSocket:</span> {wsUrl}</div>
                   <div><span className="font-medium">Host:</span> {window.location.hostname}</div>
@@ -201,23 +201,23 @@ const SystemMonitor = () => {
 
               {/* Data Information */}
               {(staticData || dynamicData) && (
-                <div className="bg-green-50 p-3 rounded-lg">
-                  <h3 className="text-sm font-semibold text-gray-700 mb-2">Data Information</h3>
+                <div className="bg-green-50 dark:bg-green-900/50 p-3 rounded-lg">
+                  <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Data Information</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                     {staticData && (
                       <div>
-                        <div className="font-medium text-gray-600 mb-1">Static Data Keys:</div>
-                        <div className="text-gray-500">{Object.keys(staticData).join(', ')}</div>
+                        <div className="font-medium text-gray-600 dark:text-gray-400 mb-1">Static Data Keys:</div>
+                        <div className="text-gray-500 dark:text-gray-400">{Object.keys(staticData).join(', ')}</div>
                       </div>
                     )}
                     {dynamicData && (
                       <div>
-                        <div className="font-medium text-gray-600 mb-1">Dynamic Data Keys:</div>
-                        <div className="text-gray-500">{Object.keys(dynamicData).join(', ')}</div>
+                        <div className="font-medium text-gray-600 dark:text-gray-400 mb-1">Dynamic Data Keys:</div>
+                        <div className="text-gray-500 dark:text-gray-400">{Object.keys(dynamicData).join(', ')}</div>
                         {dynamicData.timestamp && (
                           <div className="mt-1">
-                            <span className="font-medium text-gray-600">Last Update:</span>
-                            <span className="text-gray-500 ml-1">
+                            <span className="font-medium text-gray-600 dark:text-gray-400">Last Update:</span>
+                            <span className="text-gray-500 dark:text-gray-400 ml-1">
                               {new Date(dynamicData.timestamp).toLocaleTimeString()}
                             </span>
                           </div>
@@ -229,8 +229,8 @@ const SystemMonitor = () => {
               )}
 
               {/* Control Buttons */}
-              <div className="bg-purple-50 p-3 rounded-lg">
-                <h3 className="text-sm font-semibold text-gray-700 mb-3">Control Actions</h3>
+              <div className="bg-purple-50 dark:bg-purple-900/50 p-3 rounded-lg">
+                <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Control Actions</h3>
                 <div className="flex flex-wrap gap-2">
                   <button
                     onClick={refetchStaticData}
@@ -263,21 +263,21 @@ const SystemMonitor = () => {
 
               {/* Raw Data View */}
               {(staticData || dynamicData) && (
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <h3 className="text-sm font-semibold text-gray-700 mb-2">Raw Data (JSON)</h3>
+                <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg">
+                  <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Raw Data (JSON)</h3>
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     {staticData && (
                       <div>
-                        <div className="text-xs font-medium text-gray-600 mb-1">Static Data:</div>
-                        <pre className="text-xs bg-white p-2 rounded border overflow-auto max-h-32">
+                        <div className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Static Data:</div>
+                        <pre className="text-xs bg-white dark:bg-gray-800 dark:text-gray-300 p-2 rounded border dark:border-gray-600 overflow-auto max-h-32">
                           {JSON.stringify(staticData, null, 2)}
                         </pre>
                       </div>
                     )}
                     {dynamicData && (
                       <div>
-                        <div className="text-xs font-medium text-gray-600 mb-1">Dynamic Data:</div>
-                        <pre className="text-xs bg-white p-2 rounded border overflow-auto max-h-32">
+                        <div className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Dynamic Data:</div>
+                        <pre className="text-xs bg-white dark:bg-gray-800 dark:text-gray-300 p-2 rounded border dark:border-gray-600 overflow-auto max-h-32">
                           {JSON.stringify(dynamicData, null, 2)}
                         </pre>
                       </div>

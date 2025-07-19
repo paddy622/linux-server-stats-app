@@ -9,7 +9,7 @@ const CardSpinner = ({ size = 'md' }) => {
 
     return (
         <div className="flex items-center justify-center py-4">
-            <div className={`animate-spin rounded-full border-gray-300 border-t-blue-500 ${sizeClasses[size]}`}></div>
+            <div className={`animate-spin rounded-full border-gray-300 dark:border-gray-600 border-t-blue-500 ${sizeClasses[size]}`}></div>
         </div>
     );
 };
