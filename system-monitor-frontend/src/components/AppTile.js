@@ -5,6 +5,7 @@ const AppTile = ({
     name,
     port,
     path = '',
+    protocol = 'http',
     icon = null,
     description = '',
     hostname = window.location.hostname || 'localhost'
@@ -12,11 +13,19 @@ const AppTile = ({
     const [iconError, setIconError] = useState(false);
     const [iconLoading, setIconLoading] = useState(true);
 
-    // Ensure hostname is not empty or "unknown"
-    const resolvedHostname = hostname && hostname !== 'unknown' ? hostname : 'localhost';
+    // Use server IP address instead of hostname, fallback to window location
+    const resolvedHostname = window.location.hostname || 'localhost';
 
-    const appUrl = `http://${resolvedHostname}:${port}${path}`;
-    const faviconUrl = icon || `http://${resolvedHostname}:${port}/favicon.ico`;
+    // Handle different protocols
+    let appUrl;
+    if (protocol === 'smb') {
+        appUrl = `smb://${resolvedHostname}`;
+    } else {
+        appUrl = `${protocol}://${resolvedHostname}:${port}${path}`;
+    }
+
+    // Don't use favicon.ico by default, use null to show generic icon
+    const faviconUrl = icon; // Only use custom icon if explicitly provided
 
     const handleIconError = () => {
         setIconError(true);
@@ -26,10 +35,18 @@ const AppTile = ({
     const handleIconLoad = () => {
         setIconLoading(false);
         setIconError(false);
-    };
-
-    const handleTileClick = () => {
-        window.open(appUrl, '_blank', 'noopener,noreferrer');
+    }; const handleTileClick = () => {
+        if (protocol === 'smb') {
+            // For SMB, copy the URL to clipboard and show a notification
+            navigator.clipboard.writeText(appUrl).then(() => {
+                alert(`SMB address copied to clipboard: ${appUrl}\nOpen this in your file manager.`);
+            }).catch(() => {
+                alert(`SMB address: ${appUrl}\nCopy this and open in your file manager.`);
+            });
+        } else {
+            // For HTTP/HTTPS, open in new tab
+            window.open(appUrl, '_blank', 'noopener,noreferrer');
+        }
     };
 
     return (
@@ -41,7 +58,7 @@ const AppTile = ({
                 {/* App Icon */}
                 <div className="flex-shrink-0">
                     <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden">
-                        {!iconError ? (
+                        {faviconUrl && !iconError ? (
                             <>
                                 {iconLoading && (
                                     <div className="w-6 h-6 bg-gray-300 rounded animate-pulse"></div>
@@ -76,9 +93,20 @@ const AppTile = ({
                     )}
 
                     <div className="flex items-center justify-between mt-2">
-                        <span className="text-xs text-gray-400 font-mono">
-                            :{port}
-                        </span>
+                        <div className="flex items-center space-x-2">
+                            <span className="text-xs text-gray-400 font-mono">
+                                {protocol === 'smb' ? 'SMB' : `:${port}`}
+                            </span>
+                            {protocol === 'https' && (
+                                <span className="text-xs text-green-600 font-semibold">HTTPS</span>
+                            )}
+                            {protocol === 'http' && (
+                                <span className="text-xs text-orange-600 font-semibold">HTTP</span>
+                            )}
+                            {protocol === 'smb' && (
+                                <span className="text-xs text-blue-600 font-semibold">SMB</span>
+                            )}
+                        </div>
                         <div className="flex items-center space-x-1">
                             <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                             <span className="text-xs text-green-600">Active</span>

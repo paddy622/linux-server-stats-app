@@ -81,7 +81,7 @@ const StaticSystemInfo = ({ staticData, batteryData, apps = [] }) => {
                 <div className="pt-4 border-t border-gray-200">
                     <AppGrid
                         apps={apps}
-                        hostname={staticData.hostname && staticData.hostname !== 'unknown' ? staticData.hostname : (window.location.hostname || 'localhost')}
+                        hostname={window.location.hostname || 'localhost'}
                         showAddButton={false}
                     />
                 </div>

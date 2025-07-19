@@ -13,29 +13,33 @@ const AppGrid = ({
             name: 'Portainer',
             port: 9443,
             path: '',
+            protocol: 'https', // Use HTTPS for Portainer
             description: 'Docker container management',
-            icon: null
+            icon: null // Will show generic globe icon
         },
         {
             name: 'Immich',
             port: 2283,
             path: '',
+            protocol: 'http', // Use HTTP for Immich
             description: 'Photo Backup',
-            icon: null
+            icon: null // Will show generic globe icon
         },
         {
             name: 'Pi-hole',
             port: 9080,
             path: '/admin',
+            protocol: 'http', // Use HTTP for Pi-hole
             description: 'Network-wide ad blocking',
-            icon: null
+            icon: null // Will show generic globe icon
         },
         {
             name: 'Samba',
             port: 445,
             path: '',
+            protocol: 'smb', // Use SMB protocol for Samba
             description: 'File sharing server',
-            icon: null
+            icon: null // Will show generic globe icon
         }
     ];
 
@@ -63,6 +67,7 @@ const AppGrid = ({
                         name={app.name}
                         port={app.port}
                         path={app.path}
+                        protocol={app.protocol || 'http'}
                         icon={app.icon}
                         description={app.description}
                         hostname={hostname}
