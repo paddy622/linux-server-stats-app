@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Server } from "lucide-react";
 import useStaticData from "./hooks/useStaticData";
 import useDynamicData from "./hooks/useDynamicData";
@@ -35,20 +35,6 @@ const SystemMonitor = () => {
     reconnecting,
     sendMessage
   } = useDynamicData(wsUrl);
-
-  // Combine static and dynamic data for backward compatibility
-  const systemData = useMemo(() => {
-    if (!staticData || !dynamicData) return null;
-
-    return {
-      ...staticData,
-      ...dynamicData,
-      cpu: {
-        ...staticData.cpu,
-        ...dynamicData.cpu
-      }
-    };
-  }, [staticData, dynamicData]);
 
   // Show loading only if static data is still loading or there's a critical error
   if (staticDataLoading) {
@@ -94,7 +80,7 @@ const SystemMonitor = () => {
         {/* Main Metrics Cards - Dynamic data with live indicators */}
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <CpuCard
-            cpuData={systemData?.cpu}
+            cpuData={dynamicData?.cpu}
             timestamp={dynamicData?.timestamp}
           />
           <MemoryCard

@@ -1,22 +1,16 @@
 import React from 'react';
-import { Network, Clock, Activity } from 'lucide-react';
+import { Network, Clock } from 'lucide-react';
 import StatusCard from './StatusCard';
-import DynamicDataIndicator from './DynamicDataIndicator';
 import CardSpinner from './CardSpinner';
 
 const NetworkCard = ({ networkData, uptimeData, timestamp }) => (
-    <StatusCard title="Network & Uptime" icon={Network}>
+    <StatusCard
+        title="Network & Uptime"
+        icon={Network}
+    >
         <div className="space-y-3">
             {(networkData && uptimeData) ? (
                 <>
-                    {/* Dynamic Indicator */}
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-1">
-                            <Activity className="w-3 h-3 text-green-500" />
-                            <span className="text-xs text-green-600 font-medium">Live Data</span>
-                        </div>
-                        <DynamicDataIndicator lastUpdate={timestamp} />
-                    </div>
 
                     <div className="bg-blue-50 rounded-lg p-3">
                         <div className="flex items-center justify-between">

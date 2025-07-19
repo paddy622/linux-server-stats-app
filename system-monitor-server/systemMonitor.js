@@ -340,20 +340,29 @@ function getUptime() {
 
 function getDiskUsage() {
     try {
-        // Get all filesystem usage, then filter for /dev/ devices
-        const output = execSync('df -H /dev/sd*', { encoding: 'utf8' });
+        // Get all filesystem usage, then filter for specific /dev/ devices
+        const output = execSync('df -H', { encoding: 'utf8' });
         const lines = output.trim().split('\n');
         const filesystems = [];
+        const targetDevices = ['/dev/sda2', '/dev/sdb2', '/dev/sdb3'];
+        const mountPointMap = {
+            '/dev/sda2': '/',
+            '/dev/sdb2': '/mnt/content',
+            '/dev/sdb3': '/mnt/data'
+        };
+        const seenDevices = new Set();
 
         // Skip header line and process each filesystem
         for (let i = 1; i < lines.length; i++) {
             const parts = lines[i].split(/\s+/);
+            const device = parts[0];
 
-            // Only include /dev/ devices (real disks/partitions)
-            if (!parts[0].startsWith('df:')) {
+            // Only include specific target devices and avoid duplicates
+            if (targetDevices.includes(device) && !seenDevices.has(device)) {
+                seenDevices.add(device);
                 const filesystem = {
-                    device: parts[0],
-                    mountpoint: parts[5] || '/',
+                    device: device,
+                    mountpoint: mountPointMap[device] || parts[5] || '/',
                     usage: parseFloat(parts[4].replace('%', '')),
                     total_gb: parts[1],
                     used_gb: parts[2],
@@ -362,6 +371,7 @@ function getDiskUsage() {
                 filesystems.push(filesystem);
             }
         }
+
 
         // Calculate totals from all filesystems
         let totalSpace = 0;

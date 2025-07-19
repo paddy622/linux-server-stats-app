@@ -2,7 +2,6 @@ import React from 'react';
 import { Activity } from 'lucide-react';
 import StatusCard from './StatusCard';
 import DockerContainers from './DockerContainers';
-import DynamicDataIndicator from './DynamicDataIndicator';
 import CardSpinner from './CardSpinner';
 
 const LoadAverageCard = ({ loadavgData, dockerData, timestamp }) => (
@@ -14,15 +13,6 @@ const LoadAverageCard = ({ loadavgData, dockerData, timestamp }) => (
         <div className="space-y-4">
             {loadavgData ? (
                 <>
-                    {/* Dynamic Indicator */}
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-1">
-                            <Activity className="w-3 h-3 text-green-500" />
-                            <span className="text-xs text-green-600 font-medium">Live Data</span>
-                        </div>
-                        <DynamicDataIndicator lastUpdate={timestamp} />
-                    </div>
-
                     <div className="grid grid-cols-3 gap-3">
                         <div className="bg-blue-50 rounded-lg p-3 text-center">
                             <div className="text-lg sm:text-xl font-bold text-blue-600">

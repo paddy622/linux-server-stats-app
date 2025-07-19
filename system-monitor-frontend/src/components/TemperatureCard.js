@@ -1,22 +1,16 @@
 import React from 'react';
-import { Thermometer, Activity } from 'lucide-react';
+import { Thermometer } from 'lucide-react';
 import StatusCard from './StatusCard';
-import DynamicDataIndicator from './DynamicDataIndicator';
 import CardSpinner from './CardSpinner';
 
 const TemperatureCard = ({ temperatureData, timestamp }) => (
-    <StatusCard title="Temperature" icon={Thermometer}>
+    <StatusCard
+        title="Temperature"
+        icon={Thermometer}
+    >
         <div className="text-center">
             {temperatureData ? (
                 <>
-                    {/* Dynamic Indicator */}
-                    <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center space-x-1">
-                            <Activity className="w-3 h-3 text-green-500" />
-                            <span className="text-xs text-green-600 font-medium">Live</span>
-                        </div>
-                        <DynamicDataIndicator lastUpdate={timestamp} />
-                    </div>
 
                     {temperatureData.cpu ? (
                         <>
