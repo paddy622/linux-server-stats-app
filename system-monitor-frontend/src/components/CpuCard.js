@@ -4,10 +4,11 @@ import CircularProgress from './CircularProgress';
 import StatusCard from './StatusCard';
 import CardSpinner from './CardSpinner';
 
-const CpuCard = ({ cpuData, timestamp }) => (
+const CpuCard = ({ cpuData, timestamp, isPaused = false }) => (
     <StatusCard
         title="CPU Usage"
         icon={Cpu}
+        isPaused={isPaused}
     >
         <div className="text-center">
             {cpuData ? (

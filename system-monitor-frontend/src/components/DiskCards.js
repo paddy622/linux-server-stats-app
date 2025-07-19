@@ -4,10 +4,11 @@ import CircularProgress from './CircularProgress';
 import StatusCard from './StatusCard';
 import CardSpinner from './CardSpinner';
 
-const SingleDiskCard = ({ diskInfo, timestamp, title }) => (
+const SingleDiskCard = ({ diskInfo, timestamp, title, isPaused = false }) => (
     <StatusCard
         title={title}
         icon={HardDrive}
+        isPaused={isPaused}
     >
         <div className="text-center">
             {diskInfo ? (
@@ -57,12 +58,12 @@ const SingleDiskCard = ({ diskInfo, timestamp, title }) => (
     </StatusCard>
 );
 
-const DiskCards = ({ diskData, timestamp }) => {
+const DiskCards = ({ diskData, timestamp, isPaused = false }) => {
     if (!diskData) {
         // Show a single loading card when no data is available
         return (
             <div className="col-span-full">
-                <SingleDiskCard diskInfo={null} timestamp={timestamp} title="Disk Usage" />
+                <SingleDiskCard diskInfo={null} timestamp={timestamp} title="Disk Usage" isPaused={isPaused} />
             </div>
         );
     }
@@ -77,6 +78,7 @@ const DiskCards = ({ diskData, timestamp }) => {
                         diskInfo={filesystem}
                         timestamp={timestamp}
                         title={`Disk: ${filesystem.mountpoint}`}
+                        isPaused={isPaused}
                     />
                 ))}
             </>
@@ -98,6 +100,7 @@ const DiskCards = ({ diskData, timestamp }) => {
             diskInfo={summaryDisk}
             timestamp={timestamp}
             title="Disk Usage"
+            isPaused={isPaused}
         />
     );
 };

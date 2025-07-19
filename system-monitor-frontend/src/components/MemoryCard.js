@@ -4,10 +4,11 @@ import CircularProgress from './CircularProgress';
 import StatusCard from './StatusCard';
 import CardSpinner from './CardSpinner';
 
-const MemoryCard = ({ memoryData, timestamp }) => (
+const MemoryCard = ({ memoryData, timestamp, isPaused = false }) => (
     <StatusCard
         title="Memory Usage"
         icon={Monitor}
+        isPaused={isPaused}
     >
         <div className="text-center">
             {memoryData ? (

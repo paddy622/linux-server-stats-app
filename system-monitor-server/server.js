@@ -75,11 +75,8 @@ wss.on('connection', (ws) => {
     }
   };
 
-  // Send initial dynamic data immediately
+  // Send initial dynamic data immediately when client connects
   sendDynamicInfo();
-
-  // Send dynamic updates every 5 seconds
-  const dynamicInterval = setInterval(sendDynamicInfo, 5000);
 
   ws.on('message', (message) => {
     try {
@@ -102,12 +99,10 @@ wss.on('connection', (ws) => {
 
   ws.on('close', () => {
     console.log('WebSocket client disconnected');
-    clearInterval(dynamicInterval);
   });
 
   ws.on('error', (error) => {
     console.error('WebSocket error:', error);
-    clearInterval(dynamicInterval);
   });
 });
 

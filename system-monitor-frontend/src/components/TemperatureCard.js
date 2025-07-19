@@ -3,10 +3,11 @@ import { Thermometer } from 'lucide-react';
 import StatusCard from './StatusCard';
 import CardSpinner from './CardSpinner';
 
-const TemperatureCard = ({ temperatureData, timestamp }) => (
+const TemperatureCard = ({ temperatureData, timestamp, isPaused = false }) => (
     <StatusCard
         title="Temperature"
         icon={Thermometer}
+        isPaused={isPaused}
     >
         <div className="text-center">
             {temperatureData ? (

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Server } from "lucide-react";
 import useStaticData from "./hooks/useStaticData";
 import useDynamicData from "./hooks/useDynamicData";
@@ -13,6 +13,7 @@ import NetworkCard from "./components/NetworkCard";
 import LoadAverageCard from "./components/LoadAverageCard";
 import HorizontalAppCards from "./components/HorizontalAppCards";
 import Accordion from "./components/Accordion";
+import RefreshIntervalSelector from "./components/RefreshIntervalSelector";
 
 const SystemMonitor = () => {
   // Configuration
@@ -20,6 +21,10 @@ const SystemMonitor = () => {
   const serverPort = 5001; // Updated to match the new server port
   const baseUrl = `http://${serverHost}:${serverPort}`;
   const wsUrl = `ws://${serverHost}:${serverPort}`;
+
+  // Refresh interval state
+  const [refreshInterval, setRefreshInterval] = useState(5000); // Default 5 seconds
+  const [isPaused, setIsPaused] = useState(false);
 
   // Independent data fetching
   const {
@@ -34,7 +39,7 @@ const SystemMonitor = () => {
     connected,
     reconnecting,
     sendMessage
-  } = useDynamicData(wsUrl);
+  } = useDynamicData(wsUrl, isPaused ? null : refreshInterval);
 
   // Show loading only if static data is still loading or there's a critical error
   if (staticDataLoading) {
@@ -72,28 +77,44 @@ const SystemMonitor = () => {
           staticData={staticData}
         />
 
-        {/* Horizontal App Cards Section */}
-        <HorizontalAppCards
-          showAddButton={false}
-        />
+        {/* Hosted Applications */}
+        <div className="mb-6 sm:mb-8">
+          <HorizontalAppCards
+            showAddButton={false}
+          />
+        </div>
+
+        {/* Refresh Interval Selector */}
+        <div className="mb-6">
+          <RefreshIntervalSelector
+            interval={refreshInterval}
+            onIntervalChange={setRefreshInterval}
+            isPaused={isPaused}
+            onTogglePause={() => setIsPaused(!isPaused)}
+          />
+        </div>
 
         {/* Main Metrics Cards - Dynamic data with live indicators */}
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <CpuCard
             cpuData={dynamicData?.cpu}
             timestamp={dynamicData?.timestamp}
+            isPaused={isPaused}
           />
           <MemoryCard
             memoryData={dynamicData?.memory}
             timestamp={dynamicData?.timestamp}
+            isPaused={isPaused}
           />
           <TemperatureCard
             temperatureData={dynamicData?.temperature}
             timestamp={dynamicData?.timestamp}
+            isPaused={isPaused}
           />
           <BatteryCard
             batteryData={dynamicData?.battery}
             timestamp={dynamicData?.timestamp}
+            isPaused={isPaused}
           />
         </div>
 
@@ -107,6 +128,7 @@ const SystemMonitor = () => {
             <DiskCards
               diskData={dynamicData?.disk}
               timestamp={dynamicData?.timestamp}
+              isPaused={isPaused}
             />
           </div>
         </div>
@@ -118,6 +140,7 @@ const SystemMonitor = () => {
             networkData={dynamicData?.network}
             uptimeData={dynamicData?.uptime}
             timestamp={dynamicData?.timestamp}
+            isPaused={isPaused}
           />
 
           {/* Dynamic Load Average & Container Information */}
@@ -125,6 +148,7 @@ const SystemMonitor = () => {
             loadavgData={dynamicData?.loadavg}
             dockerData={dynamicData?.docker}
             timestamp={dynamicData?.timestamp}
+            isPaused={isPaused}
           />
         </div>
 

@@ -4,11 +4,12 @@ import CircularProgress from './CircularProgress';
 import StatusCard from './StatusCard';
 import CardSpinner from './CardSpinner';
 
-const BatteryCard = ({ batteryData, timestamp }) => {
+const BatteryCard = ({ batteryData, timestamp, isPaused = false }) => {
     return (
         <StatusCard
             title="Battery Status"
             icon={Battery}
+            isPaused={isPaused}
         >
             <div className="text-center">
                 {batteryData ? (

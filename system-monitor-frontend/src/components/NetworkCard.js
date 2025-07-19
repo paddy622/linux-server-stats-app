@@ -3,10 +3,11 @@ import { Network, Clock } from 'lucide-react';
 import StatusCard from './StatusCard';
 import CardSpinner from './CardSpinner';
 
-const NetworkCard = ({ networkData, uptimeData, timestamp }) => (
+const NetworkCard = ({ networkData, uptimeData, timestamp, isPaused = false }) => (
     <StatusCard
         title="Network & Uptime"
         icon={Network}
+        isPaused={isPaused}
     >
         <div className="space-y-3">
             {(networkData && uptimeData) ? (

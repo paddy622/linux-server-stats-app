@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 
-const useDynamicData = (wsUrl) => {
+const useDynamicData = (wsUrl, refreshInterval = 2000) => {
     const [dynamicData, setDynamicData] = useState(null);
     const [connected, setConnected] = useState(false);
     const [reconnecting, setReconnecting] = useState(false);
     const [ws, setWs] = useState(null);
     const reconnectTimeoutRef = useRef(null);
+    const intervalRef = useRef(null);
 
     const connect = () => {
         try {
@@ -98,11 +99,44 @@ const useDynamicData = (wsUrl) => {
                 clearTimeout(reconnectTimeoutRef.current);
                 reconnectTimeoutRef.current = null;
             }
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+                intervalRef.current = null;
+            }
             if (websocket) {
                 websocket.close();
             }
         };
     }, [wsUrl]);
+
+    // Set up client-side refresh interval
+    useEffect(() => {
+        if (!connected || !ws) return;
+
+        // Clear existing interval
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+        }
+
+        // If refreshInterval is null (paused), don't set up interval
+        if (refreshInterval === null) return;
+
+        // Request initial data
+        sendMessage({ type: 'requestDynamic' });
+
+        // Set up new interval
+        intervalRef.current = setInterval(() => {
+            sendMessage({ type: 'requestDynamic' });
+        }, refreshInterval);
+
+        return () => {
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+                intervalRef.current = null;
+            }
+        };
+    }, [connected, refreshInterval]);
 
     // Send a message to the WebSocket server
     const sendMessage = (message) => {

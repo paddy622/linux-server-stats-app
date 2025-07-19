@@ -4,11 +4,12 @@ import StatusCard from './StatusCard';
 import DockerContainers from './DockerContainers';
 import CardSpinner from './CardSpinner';
 
-const LoadAverageCard = ({ loadavgData, dockerData, timestamp }) => (
+const LoadAverageCard = ({ loadavgData, dockerData, timestamp, isPaused = false }) => (
     <StatusCard
         title="Load Average & Stats"
         icon={Activity}
         className="lg:col-span-2 xl:col-span-1"
+        isPaused={isPaused}
     >
         <div className="space-y-4">
             {loadavgData ? (
