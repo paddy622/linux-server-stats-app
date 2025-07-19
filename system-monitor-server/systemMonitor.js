@@ -341,7 +341,7 @@ function getUptime() {
 function getDiskUsage() {
     try {
         // Get all filesystem usage, then filter for /dev/ devices
-        const output = execSync('df -H', { encoding: 'utf8' });
+        const output = execSync('df -H /dev/sd*', { encoding: 'utf8' });
         const lines = output.trim().split('\n');
         const filesystems = [];
 
@@ -350,7 +350,7 @@ function getDiskUsage() {
             const parts = lines[i].split(/\s+/);
 
             // Only include /dev/ devices (real disks/partitions)
-            if (parts[0].startsWith('/dev/')) {
+            if (parts[0].startsWith('/dev/sd')) {
                 const filesystem = {
                     device: parts[0],
                     mountpoint: parts[5] || '/',
