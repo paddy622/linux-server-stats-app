@@ -88,7 +88,6 @@ const SystemMonitor = () => {
 
         {/* Horizontal App Cards Section */}
         <HorizontalAppCards
-          hostname={staticData?.hostname || window.location.hostname}
           showAddButton={false}
         />
 

@@ -31,7 +31,7 @@ const SingleDiskCard = ({ diskInfo, timestamp, title }) => (
                     />
                     <div className="mt-2 sm:mt-3 space-y-1">
                         <p className="text-xs sm:text-sm text-gray-600">
-                            {diskInfo.used_gb} GB / {diskInfo.total_gb} GB
+                            {diskInfo.used_gb} / {diskInfo.total_gb}
                         </p>
                         <p className="text-xs text-gray-500">
                             {diskInfo.device}
@@ -42,13 +42,13 @@ const SingleDiskCard = ({ diskInfo, timestamp, title }) => (
                         <div className="flex justify-center">
                             <span
                                 className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${diskInfo.usage > 80
-                                        ? "bg-red-100 text-red-800"
-                                        : diskInfo.usage > 60
-                                            ? "bg-yellow-100 text-yellow-800"
-                                            : "bg-green-100 text-green-800"
+                                    ? "bg-red-100 text-red-800"
+                                    : diskInfo.usage > 60
+                                        ? "bg-yellow-100 text-yellow-800"
+                                        : "bg-green-100 text-green-800"
                                     }`}
                             >
-                                {diskInfo.available_gb} GB free
+                                {diskInfo.available_gb} free
                             </span>
                         </div>
                     </div>

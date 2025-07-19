@@ -340,34 +340,57 @@ function getUptime() {
 
 function getDiskUsage() {
     try {
-        // Just get root filesystem usage
-        const output = execSync('df -B1 /', { encoding: 'utf8' });
+        // Get all filesystem usage, then filter for /dev/ devices
+        const output = execSync('df -H', { encoding: 'utf8' });
         const lines = output.trim().split('\n');
-        const parts = lines[1].split(/\s+/);
+        const filesystems = [];
 
-        const total = parseInt(parts[1]);
-        const used = parseInt(parts[2]);
-        const available = parseInt(parts[3]);
-        const usage = parseFloat(parts[4].replace('%', ''));
+        // Skip header line and process each filesystem
+        for (let i = 1; i < lines.length; i++) {
+            const parts = lines[i].split(/\s+/);
 
-        const filesystem = {
-            device: parts[0],
-            mountpoint: parts[5],
-            total,
-            used,
-            available,
-            usage,
-            total_gb: Math.round(total / 1024 / 1024 / 1024 * 100) / 100,
-            used_gb: Math.round(used / 1024 / 1024 / 1024 * 100) / 100,
-            available_gb: Math.round(available / 1024 / 1024 / 1024 * 100) / 100
-        };
+            // Only include /dev/ devices (real disks/partitions)
+            if (parts[0].startsWith('/dev/')) {
+                const filesystem = {
+                    device: parts[0],
+                    mountpoint: parts[5] || '/',
+                    usage: parseFloat(parts[4].replace('%', '')),
+                    total_gb: parts[1],
+                    used_gb: parts[2],
+                    available_gb: parts[3]
+                };
+                filesystems.push(filesystem);
+            }
+        }
+
+        // Calculate totals from all filesystems
+        let totalSpace = 0;
+        let usedSpace = 0;
+        let availableSpace = 0;
+        let overallUsage = 0;
+
+        filesystems.forEach(fs => {
+            // Parse sizes for calculation (simplified - just extract numeric part)
+            const totalNum = parseFloat(fs.total_gb);
+            const usedNum = parseFloat(fs.used_gb);
+            const availableNum = parseFloat(fs.available_gb);
+
+            if (!isNaN(totalNum)) totalSpace += totalNum;
+            if (!isNaN(usedNum)) usedSpace += usedNum;
+            if (!isNaN(availableNum)) availableSpace += availableNum;
+        });
+
+        // Calculate overall usage percentage
+        if (totalSpace > 0) {
+            overallUsage = parseFloat(((usedSpace / totalSpace) * 100).toFixed(2));
+        }
 
         return {
-            filesystems: [filesystem],
-            total: filesystem.total_gb,
-            used: filesystem.used_gb,
-            available: filesystem.available_gb,
-            usage: filesystem.usage
+            filesystems: filesystems,
+            total: totalSpace,
+            used: usedSpace,
+            available: availableSpace,
+            usage: overallUsage
         };
 
     } catch (error) {
