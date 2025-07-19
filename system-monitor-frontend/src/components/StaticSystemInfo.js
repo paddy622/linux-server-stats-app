@@ -3,8 +3,9 @@ import { Server, Info } from 'lucide-react';
 import { QRCodeCanvas } from 'qrcode.react';
 import StatusCard from './StatusCard';
 import BatteryInfo from './BatteryInfo';
+import AppGrid from './AppGrid';
 
-const StaticSystemInfo = ({ staticData, batteryData }) => {
+const StaticSystemInfo = ({ staticData, batteryData, apps = [] }) => {
     if (!staticData) return null;
 
     return (
@@ -74,6 +75,15 @@ const StaticSystemInfo = ({ staticData, batteryData }) => {
                             {window.location.origin}
                         </div>
                     </div>
+                </div>
+
+                {/* Hosted Applications Section */}
+                <div className="pt-4 border-t border-gray-200">
+                    <AppGrid
+                        apps={apps}
+                        hostname={staticData.hostname && staticData.hostname !== 'unknown' ? staticData.hostname : (window.location.hostname || 'localhost')}
+                        showAddButton={false}
+                    />
                 </div>
             </div>
         </StatusCard>
