@@ -102,7 +102,7 @@ function getBatteryInfo() {
             }
         }
 
-        return batteries.length > 0 ? batteries : null;
+        return batteries;
     } catch (error) {
         console.error('Battery info error:', error.message);
         return null;

@@ -6,11 +6,13 @@ import LoadingState from "./components/LoadingState";
 import Header from "./components/Header";
 import CpuCard from "./components/CpuCard";
 import MemoryCard from "./components/MemoryCard";
-import DiskCard from "./components/DiskCard";
+import DiskCards from "./components/DiskCards";
 import TemperatureCard from "./components/TemperatureCard";
-import StaticSystemInfo from "./components/StaticSystemInfo";
+import BatteryCard from "./components/BatteryCard";
 import NetworkCard from "./components/NetworkCard";
 import LoadAverageCard from "./components/LoadAverageCard";
+import HorizontalAppCards from "./components/HorizontalAppCards";
+import Accordion from "./components/Accordion";
 
 const SystemMonitor = () => {
   // Configuration
@@ -74,16 +76,6 @@ const SystemMonitor = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-3 sm:p-4 lg:p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Development info - remove in production */}
-        {process.env.NODE_ENV === 'development' && (
-          <div className="mb-4 p-2 bg-yellow-100 border border-yellow-300 rounded text-xs">
-            <div>Static Data: {staticData ? '✅ Loaded' : '❌ Missing'}</div>
-            <div>Dynamic Data: {dynamicData ? '✅ Connected' : '❌ Waiting'}</div>
-            <div>WebSocket: {connected ? '🟢 Connected' : reconnecting ? '🟡 Reconnecting' : '🔴 Disconnected'}</div>
-            <div>Server: {baseUrl} | WS: {wsUrl}</div>
-          </div>
-        )}
-
         {/* Header - Shows static data and connection status */}
         <Header
           hostname={staticData?.hostname}
@@ -91,6 +83,13 @@ const SystemMonitor = () => {
           arch={staticData?.arch}
           connected={connected}
           reconnecting={reconnecting}
+          staticData={staticData}
+        />
+
+        {/* Horizontal App Cards Section */}
+        <HorizontalAppCards
+          hostname={staticData?.hostname || window.location.hostname}
+          showAddButton={false}
         />
 
         {/* Main Metrics Cards - Dynamic data with live indicators */}
@@ -103,24 +102,32 @@ const SystemMonitor = () => {
             memoryData={dynamicData?.memory}
             timestamp={dynamicData?.timestamp}
           />
-          <DiskCard
-            diskData={dynamicData?.disk}
-            timestamp={dynamicData?.timestamp}
-          />
           <TemperatureCard
             temperatureData={dynamicData?.temperature}
             timestamp={dynamicData?.timestamp}
           />
+          <BatteryCard
+            batteryData={dynamicData?.battery}
+            timestamp={dynamicData?.timestamp}
+          />
+        </div>
+
+        {/* Disk Usage Section - Separate row for multiple disks */}
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+            <span className="text-blue-500 mr-2">💾</span>
+            Storage Devices
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+            <DiskCards
+              diskData={dynamicData?.disk}
+              timestamp={dynamicData?.timestamp}
+            />
+          </div>
         </div>
 
         {/* Detailed Information Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-          {/* Static System Information */}
-          <StaticSystemInfo
-            staticData={staticData}
-            batteryData={dynamicData?.battery}
-          />
-
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           {/* Dynamic Network & Uptime Information */}
           <NetworkCard
             networkData={dynamicData?.network}
@@ -136,34 +143,142 @@ const SystemMonitor = () => {
           />
         </div>
 
-        {/* Debug controls in development */}
-        {process.env.NODE_ENV === 'development' && (
-          <div className="mt-4 p-3 bg-gray-100 rounded">
-            <div className="text-sm font-medium mb-2">Debug Controls:</div>
-            <div className="space-x-2">
-              <button
-                onClick={refetchStaticData}
-                className="px-3 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"
-              >
-                Refetch Static Data
-              </button>
-              <button
-                onClick={() => sendMessage({ type: 'ping' })}
-                className="px-3 py-1 bg-green-500 text-white rounded text-xs hover:bg-green-600"
-                disabled={!connected}
-              >
-                Ping WebSocket
-              </button>
-              <button
-                onClick={() => sendMessage({ type: 'requestDynamic' })}
-                className="px-3 py-1 bg-purple-500 text-white rounded text-xs hover:bg-purple-600"
-                disabled={!connected}
-              >
-                Request Dynamic Data
-              </button>
+        {/* Debug & Developer Tools Accordion */}
+        <div className="mt-8">
+          <Accordion title="🛠️ Debug & Developer Tools" defaultOpen={false}>
+            <div className="space-y-4">
+              {/* Connection Status */}
+              <div className="bg-gray-50 p-3 rounded-lg">
+                <h3 className="text-sm font-semibold text-gray-700 mb-2">Connection Status</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+                  <div className="flex justify-between">
+                    <span>Static Data:</span>
+                    <span className={staticData ? 'text-green-600' : 'text-red-600'}>
+                      {staticData ? '✅ Loaded' : '❌ Missing'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Dynamic Data:</span>
+                    <span className={dynamicData ? 'text-green-600' : 'text-red-600'}>
+                      {dynamicData ? '✅ Connected' : '❌ Waiting'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>WebSocket:</span>
+                    <span className={
+                      connected ? 'text-green-600' :
+                        reconnecting ? 'text-yellow-600' : 'text-red-600'
+                    }>
+                      {connected ? '🟢 Connected' : reconnecting ? '🟡 Reconnecting' : '🔴 Disconnected'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Environment:</span>
+                    <span className="text-blue-600">{process.env.NODE_ENV || 'development'}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Server Configuration */}
+              <div className="bg-blue-50 p-3 rounded-lg">
+                <h3 className="text-sm font-semibold text-gray-700 mb-2">Server Configuration</h3>
+                <div className="text-xs space-y-1">
+                  <div><span className="font-medium">Static API:</span> {baseUrl}/api/static</div>
+                  <div><span className="font-medium">WebSocket:</span> {wsUrl}</div>
+                  <div><span className="font-medium">Host:</span> {window.location.hostname}</div>
+                  <div><span className="font-medium">Protocol:</span> {window.location.protocol}</div>
+                </div>
+              </div>
+
+              {/* Data Information */}
+              {(staticData || dynamicData) && (
+                <div className="bg-green-50 p-3 rounded-lg">
+                  <h3 className="text-sm font-semibold text-gray-700 mb-2">Data Information</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                    {staticData && (
+                      <div>
+                        <div className="font-medium text-gray-600 mb-1">Static Data Keys:</div>
+                        <div className="text-gray-500">{Object.keys(staticData).join(', ')}</div>
+                      </div>
+                    )}
+                    {dynamicData && (
+                      <div>
+                        <div className="font-medium text-gray-600 mb-1">Dynamic Data Keys:</div>
+                        <div className="text-gray-500">{Object.keys(dynamicData).join(', ')}</div>
+                        {dynamicData.timestamp && (
+                          <div className="mt-1">
+                            <span className="font-medium text-gray-600">Last Update:</span>
+                            <span className="text-gray-500 ml-1">
+                              {new Date(dynamicData.timestamp).toLocaleTimeString()}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Control Buttons */}
+              <div className="bg-purple-50 p-3 rounded-lg">
+                <h3 className="text-sm font-semibold text-gray-700 mb-3">Control Actions</h3>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={refetchStaticData}
+                    className="px-3 py-2 bg-blue-500 text-white rounded text-xs hover:bg-blue-600 transition-colors"
+                  >
+                    🔄 Refetch Static Data
+                  </button>
+                  <button
+                    onClick={() => sendMessage({ type: 'ping' })}
+                    className="px-3 py-2 bg-green-500 text-white rounded text-xs hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={!connected}
+                  >
+                    🏓 Ping WebSocket
+                  </button>
+                  <button
+                    onClick={() => sendMessage({ type: 'requestDynamic' })}
+                    className="px-3 py-2 bg-purple-500 text-white rounded text-xs hover:bg-purple-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={!connected}
+                  >
+                    📊 Request Dynamic Data
+                  </button>
+                  <button
+                    onClick={() => window.location.reload()}
+                    className="px-3 py-2 bg-orange-500 text-white rounded text-xs hover:bg-orange-600 transition-colors"
+                  >
+                    🔄 Reload Page
+                  </button>
+                </div>
+              </div>
+
+              {/* Raw Data View */}
+              {(staticData || dynamicData) && (
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <h3 className="text-sm font-semibold text-gray-700 mb-2">Raw Data (JSON)</h3>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    {staticData && (
+                      <div>
+                        <div className="text-xs font-medium text-gray-600 mb-1">Static Data:</div>
+                        <pre className="text-xs bg-white p-2 rounded border overflow-auto max-h-32">
+                          {JSON.stringify(staticData, null, 2)}
+                        </pre>
+                      </div>
+                    )}
+                    {dynamicData && (
+                      <div>
+                        <div className="text-xs font-medium text-gray-600 mb-1">Dynamic Data:</div>
+                        <pre className="text-xs bg-white p-2 rounded border overflow-auto max-h-32">
+                          {JSON.stringify(dynamicData, null, 2)}
+                        </pre>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        )}
+          </Accordion>
+        </div>
       </div>
     </div>
   );
