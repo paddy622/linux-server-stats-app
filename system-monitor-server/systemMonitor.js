@@ -350,7 +350,7 @@ function getDiskUsage() {
             const parts = lines[i].split(/\s+/);
 
             // Only include /dev/ devices (real disks/partitions)
-            if (parts[0].startsWith('/dev/sd')) {
+            if (!parts[0].startsWith('df:')) {
                 const filesystem = {
                     device: parts[0],
                     mountpoint: parts[5] || '/',
