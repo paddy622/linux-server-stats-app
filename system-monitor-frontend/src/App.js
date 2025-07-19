@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Server } from "lucide-react";
-import useWebSocket from "./hooks/useWebSocket";
+import useStaticData from "./hooks/useStaticData";
+import useDynamicData from "./hooks/useDynamicData";
 import LoadingState from "./components/LoadingState";
 import Header from "./components/Header";
 import CpuCard from "./components/CpuCard";
@@ -12,42 +13,77 @@ import NetworkCard from "./components/NetworkCard";
 import LoadAverageCard from "./components/LoadAverageCard";
 
 const SystemMonitor = () => {
-  const { systemData, staticData, dynamicData, connected, reconnecting, isInitialLoad } = useWebSocket(`ws://${window.location.hostname}:5001`);
+  // Configuration
+  const serverHost = window.location.hostname;
+  const serverPort = 5001; // Updated to match the new server port
+  const baseUrl = `http://${serverHost}:${serverPort}`;
+  const wsUrl = `ws://${serverHost}:${serverPort}`;
 
-  // Show loading only for initial connection or when there's no static data at all
-  if (!connected && !staticData) {
+  // Independent data fetching
+  const {
+    staticData,
+    loading: staticDataLoading,
+    error: staticDataError,
+    refetch: refetchStaticData
+  } = useStaticData(baseUrl);
+
+  const {
+    dynamicData,
+    connected,
+    reconnecting,
+    sendMessage
+  } = useDynamicData(wsUrl);
+
+  // Combine static and dynamic data for backward compatibility
+  const systemData = useMemo(() => {
+    if (!staticData || !dynamicData) return null;
+
+    return {
+      ...staticData,
+      ...dynamicData,
+      cpu: {
+        ...staticData.cpu,
+        ...dynamicData.cpu
+      }
+    };
+  }, [staticData, dynamicData]);
+
+  // Show loading only if static data is still loading or there's a critical error
+  if (staticDataLoading) {
     return (
       <LoadingState
-        title="Connecting to Server..."
-        subtitle="Make sure the WebSocket server is running on port 8080"
+        title="Loading System Information..."
+        subtitle="Fetching server configuration and static data..."
         icon={Server}
       />
     );
   }
 
-  // Show loading only if we have no static data (first time loading)
-  if (isInitialLoad && !staticData) {
+  // Show error if static data failed to load
+  if (staticDataError) {
     return (
       <LoadingState
-        title="Loading System Data..."
-        subtitle="Gathering server metrics..."
+        title="Connection Failed"
+        subtitle={`Failed to load system data: ${staticDataError}`}
+        icon={Server}
       />
     );
   }
 
-  // Add safety check for dynamic data
-  if (!dynamicData || !systemData) {
-    return (
-      <LoadingState
-        title="Loading System Data..."
-        subtitle="Gathering server metrics..."
-      />
-    );
-  }
-
+  // Show static data immediately, dynamic cards will show loading individually
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-3 sm:p-4 lg:p-6">
       <div className="max-w-7xl mx-auto">
+        {/* Development info - remove in production */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="mb-4 p-2 bg-yellow-100 border border-yellow-300 rounded text-xs">
+            <div>Static Data: {staticData ? '✅ Loaded' : '❌ Missing'}</div>
+            <div>Dynamic Data: {dynamicData ? '✅ Connected' : '❌ Waiting'}</div>
+            <div>WebSocket: {connected ? '🟢 Connected' : reconnecting ? '🟡 Reconnecting' : '🔴 Disconnected'}</div>
+            <div>Server: {baseUrl} | WS: {wsUrl}</div>
+          </div>
+        )}
+
         {/* Header - Shows static data and connection status */}
         <Header
           hostname={staticData?.hostname}
@@ -99,6 +135,35 @@ const SystemMonitor = () => {
             timestamp={dynamicData?.timestamp}
           />
         </div>
+
+        {/* Debug controls in development */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="mt-4 p-3 bg-gray-100 rounded">
+            <div className="text-sm font-medium mb-2">Debug Controls:</div>
+            <div className="space-x-2">
+              <button
+                onClick={refetchStaticData}
+                className="px-3 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"
+              >
+                Refetch Static Data
+              </button>
+              <button
+                onClick={() => sendMessage({ type: 'ping' })}
+                className="px-3 py-1 bg-green-500 text-white rounded text-xs hover:bg-green-600"
+                disabled={!connected}
+              >
+                Ping WebSocket
+              </button>
+              <button
+                onClick={() => sendMessage({ type: 'requestDynamic' })}
+                className="px-3 py-1 bg-purple-500 text-white rounded text-xs hover:bg-purple-600"
+                disabled={!connected}
+              >
+                Request Dynamic Data
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

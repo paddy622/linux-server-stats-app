@@ -6,16 +6,54 @@ const useWebSocket = (url) => {
     const [connected, setConnected] = useState(false);
     const [ws, setWs] = useState(null);
     const [reconnecting, setReconnecting] = useState(false);
+    const [staticDataLoading, setStaticDataLoading] = useState(true);
+    const [staticDataError, setStaticDataError] = useState(null);
     const reconnectTimeoutRef = useRef(null);
     const staticDataRef = useRef(null);
 
+    // Fetch static data from HTTP endpoint
+    const fetchStaticData = async () => {
+        try {
+            setStaticDataLoading(true);
+            setStaticDataError(null);
+
+            // Extract hostname and port from WebSocket URL
+            const wsUrl = new URL(url);
+            const staticEndpoint = `http://${wsUrl.host}/api/static`;
+
+            console.log('Fetching static data from:', staticEndpoint);
+
+            const response = await fetch(staticEndpoint);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const result = await response.json();
+            console.log('Static data received:', result);
+
+            if (result.type === 'static' && result.data) {
+                setStaticData(result.data);
+                staticDataRef.current = result.data;
+                setStaticDataLoading(false);
+                return result.data;
+            } else {
+                throw new Error('Invalid static data format received');
+            }
+        } catch (error) {
+            console.error('Failed to fetch static data:', error);
+            setStaticDataError(error.message);
+            setStaticDataLoading(false);
+            return null;
+        }
+    };
+
     const connect = () => {
         try {
-            // WebSocket connection
+            console.log('Connecting to WebSocket for dynamic data:', url);
             const websocket = new WebSocket(url);
 
             websocket.onopen = () => {
-                console.log('Connected to WebSocket server');
+                console.log('Connected to WebSocket server for dynamic data');
                 setConnected(true);
                 setReconnecting(false);
                 setWs(websocket);
@@ -29,21 +67,27 @@ const useWebSocket = (url) => {
 
             websocket.onmessage = (event) => {
                 const message = JSON.parse(event.data);
+                console.log('WebSocket message received:', message.type);
 
-                // Handle different message types from server
-                if (message.type === 'static') {
-                    // Server sent static data
-                    setStaticData(message.data);
-                    staticDataRef.current = message.data;
-                    console.log('Received static data from server');
-                } else if (message.type === 'dynamic') {
-                    // Server sent dynamic data
+                if (message.type === 'dynamic') {
+                    // Server sent dynamic data - this is our primary use case
                     setDynamicData(message.data);
+                } else if (message.type === 'pong') {
+                    // Handle pong responses for connection health
+                    console.log('Pong received from server');
+                } else if (message.type === 'static') {
+                    // Handle static data from WebSocket (fallback)
+                    console.log('Received static data via WebSocket (fallback)');
+                    if (!staticDataRef.current) {
+                        setStaticData(message.data);
+                        staticDataRef.current = message.data;
+                    }
                 } else if (message.type === 'full') {
-                    // Server sent full data (fallback or initial)
+                    // Handle full data (legacy support)
+                    console.log('Received full data via WebSocket (legacy)');
                     const data = message.data;
 
-                    // Extract static data if not already set or preserved
+                    // Extract static data if not already set
                     if (!staticDataRef.current) {
                         const newStaticData = {
                             hostname: data.hostname,
@@ -61,9 +105,7 @@ const useWebSocket = (url) => {
                     // Update dynamic data
                     const newDynamicData = {
                         timestamp: data.timestamp,
-                        cpu: {
-                            usage: data.cpu?.usage
-                        },
+                        cpu: { usage: data.cpu?.usage },
                         memory: data.memory,
                         temperature: data.temperature,
                         uptime: data.uptime,
@@ -75,41 +117,7 @@ const useWebSocket = (url) => {
                     };
                     setDynamicData(newDynamicData);
                 } else {
-                    // Legacy format - handle old format for backward compatibility
-                    const data = message.data || message;
-
-                    // Separate static and dynamic data
-                    if (!staticDataRef.current) {
-                        // First time loading - extract static data
-                        const newStaticData = {
-                            hostname: data.hostname,
-                            platform: data.platform,
-                            arch: data.arch,
-                            cpu: {
-                                model: data.cpu?.model,
-                                cores: data.cpu?.cores
-                            }
-                        };
-                        setStaticData(newStaticData);
-                        staticDataRef.current = newStaticData;
-                    }
-
-                    // Always update dynamic data
-                    const newDynamicData = {
-                        timestamp: data.timestamp,
-                        cpu: {
-                            usage: data.cpu?.usage
-                        },
-                        memory: data.memory,
-                        temperature: data.temperature,
-                        uptime: data.uptime,
-                        network: data.network,
-                        disk: data.disk,
-                        loadavg: data.loadavg,
-                        battery: data.battery,
-                        docker: data.docker
-                    };
-                    setDynamicData(newDynamicData);
+                    console.log('Unknown message type:', message.type);
                 }
             };
 
@@ -143,7 +151,17 @@ const useWebSocket = (url) => {
     };
 
     useEffect(() => {
-        const websocket = connect();
+        let websocket = null;
+
+        const initializeConnection = async () => {
+            // First, fetch static data from HTTP endpoint
+            await fetchStaticData();
+
+            // Then connect to WebSocket for dynamic data
+            websocket = connect();
+        };
+
+        initializeConnection();
 
         return () => {
             setReconnecting(true); // Prevent auto-reconnection on cleanup
@@ -181,6 +199,8 @@ const useWebSocket = (url) => {
         connected,
         reconnecting,
         ws,
+        staticDataLoading,
+        staticDataError,
         isInitialLoad: !staticDataRef.current || !dynamicData
     };
 };
