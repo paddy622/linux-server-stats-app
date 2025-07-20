@@ -14,6 +14,7 @@ import LoadAverageCard from "./components/LoadAverageCard";
 import HorizontalAppCards from "./components/HorizontalAppCards";
 import Accordion from "./components/Accordion";
 import RefreshIntervalSelector from "./components/RefreshIntervalSelector";
+import PWADetector from "./components/PWADetector";
 
 const SystemMonitor = () => {
   // Configuration
@@ -289,6 +290,9 @@ const SystemMonitor = () => {
           </Accordion>
         </div>
       </div>
+
+      {/* PWA Installation Detector */}
+      <PWADetector />
     </div>
   );
 };

@@ -2,6 +2,7 @@ import React from 'react';
 import { Server, Info } from 'lucide-react';
 import { QRCodeCanvas } from 'qrcode.react';
 import ThemeToggle from './ThemeToggle';
+import InstallButton from './InstallButton';
 
 const Header = ({ hostname, platform, arch, connected, reconnecting = false, staticData }) => {
     const getConnectionStatus = () => {
@@ -25,6 +26,7 @@ const Header = ({ hostname, platform, arch, connected, reconnecting = false, sta
                 </div>
 
                 <div className="flex items-center space-x-4">
+                    <InstallButton />
                     <ThemeToggle />
                     <div className="flex items-center">
                         <div className={`w-2 h-2 rounded-full mr-2 ${status.bg} ${reconnecting ? 'animate-pulse' : ''}`}></div>
