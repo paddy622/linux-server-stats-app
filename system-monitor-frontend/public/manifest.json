@@ -59,14 +59,64 @@
   ],
   "start_url": "/",
   "display": "standalone",
+  "display_override": [
+    "window-controls-overlay",
+    "standalone",
+    "minimal-ui"
+  ],
   "orientation": "portrait-primary",
   "theme_color": "#E95420",
-  "background_color": "#ffffff",
+  "background_color": "#1f2937",
   "categories": [
     "productivity",
-    "utilities"
+    "utilities",
+    "developer"
   ],
   "lang": "en-US",
   "scope": "/",
-  "prefer_related_applications": false
+  "prefer_related_applications": false,
+  "protocol_handlers": [
+    {
+      "protocol": "web+systemmonitor",
+      "url": "/?protocol=%s"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "View system dashboard",
+      "url": "/",
+      "icons": [
+        {
+          "src": "logo192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "CPU Monitor",
+      "short_name": "CPU",
+      "description": "Monitor CPU usage",
+      "url": "/?view=cpu",
+      "icons": [
+        {
+          "src": "logo192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
 }

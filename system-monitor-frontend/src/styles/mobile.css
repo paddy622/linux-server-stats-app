@@ -1,8 +1,57 @@
 /* Mobile-specific styles for PWA */
 
+/* PWA Mode Detection */
+.pwa-mode {
+    /* Native app styling when installed */
+    --status-bar-height: 24px;
+}
+
+/* Safe area support for devices with notches */
+@supports (padding: max(0px)) {
+    .pt-safe-top {
+        padding-top: max(24px, env(safe-area-inset-top));
+    }
+
+    .pb-safe-bottom {
+        padding-bottom: max(12px, env(safe-area-inset-bottom));
+    }
+
+    .pl-safe-left {
+        padding-left: max(12px, env(safe-area-inset-left));
+    }
+
+    .pr-safe-right {
+        padding-right: max(12px, env(safe-area-inset-right));
+    }
+}
+
+/* PWA Container */
+.pwa-container {
+    /* Remove browser chrome feeling */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    min-height: 100dvh;
+    /* Dynamic viewport height */
+}
+
+.native-app-content {
+    background: #ffffff;
+    border-radius: 20px 20px 0 0;
+    min-height: calc(100vh - var(--status-bar-height, 24px));
+    position: relative;
+    overflow: hidden;
+}
+
+/* Dark mode native app content */
+@media (prefers-color-scheme: dark) {
+    .native-app-content {
+        background: #1f2937;
+    }
+}
+
 /* iOS Safari specific */
 @supports (-webkit-touch-callout: none) {
-    .app-container {
+    .pwa-container {
         /* Prevent bounce scrolling on iOS */
         position: fixed;
         overflow: hidden;
@@ -10,21 +59,47 @@
         height: 100%;
     }
 
-    .app-scrollable {
+    .native-app-content {
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
         height: 100%;
-        padding-bottom: env(safe-area-inset-bottom);
     }
 }
 
-/* Safe area support for devices with notches */
-@supports (padding: max(0px)) {
-    .app-container {
-        padding-left: max(12px, env(safe-area-inset-left));
-        padding-right: max(12px, env(safe-area-inset-right));
-        padding-top: max(12px, env(safe-area-inset-top));
-        padding-bottom: max(12px, env(safe-area-inset-bottom));
+/* Android PWA specific optimizations */
+@media screen and (display-mode: standalone) {
+    body {
+        /* Remove default margins in standalone mode */
+        margin: 0;
+        padding: 0;
+        /* Prevent pull-to-refresh */
+        overscroll-behavior: none;
+        /* Prevent selection on UI elements */
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+    }
+
+    /* Enable selection only for text content */
+    p,
+    span,
+    div[contenteditable],
+    input,
+    textarea {
+        -webkit-user-select: text;
+        -moz-user-select: text;
+        user-select: text;
+    }
+
+    /* Hide install button in standalone mode */
+    .install-button {
+        display: none !important;
+    }
+
+    /* Native app status bar */
+    .status-bar {
+        height: var(--status-bar-height, 24px);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
 }
 
