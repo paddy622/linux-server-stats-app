@@ -25,17 +25,20 @@ const HOST_ETC = '/host/etc';
 
 export function getCpuUsage(): CpuUsage {
     try {
-        const stat = fs.readFileSync(`${HOST_PROC}/stat`, 'utf8');
-        const lines = stat.split('\n');
-        const cpuLine = lines[0];
-        const values = cpuLine.split(/\s+/).slice(1).map(Number);
+        // const stat = fs.readFileSync(`${HOST_PROC}/stat`, 'utf8');
+        // const lines = stat.split('\n');
+        const stdout = execSync('mpstat -P ALL 1 1', { encoding: 'utf8' });
+        const lines = stdout.split('\n');
 
-        const [user, nice, system, idle, iowait, irq, softirq] = values;
-        const total = user + nice + system + idle + iowait + irq + softirq;
-        const usage = ((total - idle - iowait) / total) * 100;
+        const cpuLine = lines[4];
+        const values = cpuLine.split(/\s+/).slice(1).map(String);
+
+        // const [user, nice, system, idle, iowait, irq, softirq] = values;
+        // const total = user + nice + system + idle + iowait + irq + softirq;
+        // const usage = ((total - idle - iowait) / total) * 100;
 
         return {
-            usage: parseFloat(usage.toFixed(2)),
+            usage: parseFloat(values[3]),
         };
     } catch (error) {
         console.error('CPU usage error:', (error as Error).message);
