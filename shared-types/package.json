@@ -1,0 +1,28 @@
+{
+    "name": "@linux-server-stats/shared-types",
+    "version": "1.0.0",
+    "description": "Shared TypeScript types for Linux Server Stats application",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "tsc",
+        "watch": "tsc --watch",
+        "clean": "rm -rf dist",
+        "prepublishOnly": "npm run build"
+    },
+    "devDependencies": {
+        "typescript": "^5.0.0"
+    },
+    "keywords": [
+        "typescript",
+        "types",
+        "linux",
+        "system-monitor",
+        "shared"
+    ],
+    "author": "Your Name",
+    "license": "MIT",
+    "files": [
+        "dist/"
+    ]
+}

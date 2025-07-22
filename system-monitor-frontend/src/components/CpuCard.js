@@ -25,9 +25,9 @@ const CpuCard = ({ cpuData, timestamp, isPaused = false }) => (
                         }
                     />
                     <div className="mt-2 sm:mt-3 space-y-1">
-                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                        {/* <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                             {cpuData.cores} cores
-                        </p>
+                        </p> */}
                         <div className="flex justify-center">
                             <span
                                 className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${cpuData.usage > 80

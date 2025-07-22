@@ -2,3 +2,4 @@ system-monitor-frontend/node_modules
 system-monitor-frontend/build
 
 system-monitor-server/node_modules
+shared-types/node_modules

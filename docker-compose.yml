@@ -13,8 +13,8 @@ services:
 
   backend:
     build:
-      context: ./system-monitor-server
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./system-monitor-server/Dockerfile
     ports:
       - "5001:8080"
     environment:
