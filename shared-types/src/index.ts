@@ -105,9 +105,6 @@ export interface LoadAverage {
 // System Information Types
 export interface DynamicSystemInfo {
     timestamp: number;
-    hostname: string;
-    platform: string;
-    arch: string;
     cpu: CpuUsage;
     memory: MemoryUsage;
     temperature: TemperatureInfo;

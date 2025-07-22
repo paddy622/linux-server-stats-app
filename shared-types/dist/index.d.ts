@@ -7,9 +7,6 @@ export interface CpuInfo {
     model: string;
     cores: number;
 }
-export interface CpuDynamic {
-    usage: number;
-}
 export interface BatteryInfo {
     name: string;
     status: string;
@@ -83,11 +80,8 @@ export interface LoadAverage {
     '5min': number;
     '15min': number;
 }
-export interface SystemInfo {
+export interface DynamicSystemInfo {
     timestamp: number;
-    hostname: string;
-    platform: string;
-    arch: string;
     cpu: CpuUsage;
     memory: MemoryUsage;
     temperature: TemperatureInfo;
@@ -95,7 +89,7 @@ export interface SystemInfo {
     network: NetworkInterface[];
     disk: DiskUsage;
     loadavg: LoadAverage;
-    battery: BatteryInfo[] | null;
+    battery: BatteryInfo[];
     docker: DockerContainer[];
 }
 export interface StaticSystemInfo {
@@ -103,18 +97,6 @@ export interface StaticSystemInfo {
     platform: string;
     arch: string;
     cpu: CpuInfo;
-}
-export interface DynamicSystemInfo {
-    timestamp: number;
-    cpu: CpuDynamic;
-    memory: MemoryUsage;
-    temperature: TemperatureInfo;
-    uptime: UptimeInfo;
-    network: NetworkInterface[];
-    disk: DiskUsage;
-    loadavg: LoadAverage;
-    battery: BatteryInfo[] | null;
-    docker: DockerContainer[];
 }
 export interface WebSocketMessage<T = any> {
     type: string;
@@ -126,9 +108,6 @@ export interface StaticDataMessage extends WebSocketMessage<StaticSystemInfo> {
 }
 export interface DynamicDataMessage extends WebSocketMessage<DynamicSystemInfo> {
     type: 'dynamic';
-}
-export interface SystemDataMessage extends WebSocketMessage<SystemInfo> {
-    type: 'system';
 }
 export interface HealthCheckResponse {
     status: 'healthy' | 'unhealthy';
@@ -142,8 +121,8 @@ export interface ErrorResponse {
     error: string;
     timestamp?: number;
 }
-export type AllWebSocketMessages = StaticDataMessage | DynamicDataMessage | SystemDataMessage;
-export type SystemDataType = 'static' | 'dynamic' | 'system';
+export type AllWebSocketMessages = StaticDataMessage | DynamicDataMessage;
+export type SystemDataType = 'static' | 'dynamic';
 export interface RefreshInterval {
     value: number;
     label: string;
