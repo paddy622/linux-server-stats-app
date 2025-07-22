@@ -1,10 +1,18 @@
 import React from 'react';
 import { Activity } from 'lucide-react';
+import { LoadAverage, DockerContainer } from '@linux-server-stats/shared-types';
 import StatusCard from './StatusCard';
 import DockerContainers from './DockerContainers';
 import CardSpinner from './CardSpinner';
 
-const LoadAverageCard = ({ loadavgData, dockerData, timestamp, isPaused = false }) => (
+interface LoadAverageCardProps {
+    loadavgData?: LoadAverage;
+    dockerData?: DockerContainer[];
+    timestamp?: number;
+    isPaused?: boolean;
+}
+
+const LoadAverageCard: React.FC<LoadAverageCardProps> = ({ loadavgData, dockerData, timestamp, isPaused = false }) => (
     <StatusCard
         title="Load Average & Stats"
         icon={Activity}
@@ -55,4 +63,6 @@ const LoadAverageCard = ({ loadavgData, dockerData, timestamp, isPaused = false 
             )}
         </div>
     </StatusCard>
-); export default LoadAverageCard;
+);
+
+export default LoadAverageCard;

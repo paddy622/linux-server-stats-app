@@ -1,10 +1,17 @@
 import React from 'react';
 import { Cpu } from 'lucide-react';
+import { CpuUsage } from '@linux-server-stats/shared-types';
 import CircularProgress from './CircularProgress';
 import StatusCard from './StatusCard';
 import CardSpinner from './CardSpinner';
 
-const CpuCard = ({ cpuData, timestamp, isPaused = false }) => (
+interface CpuCardProps {
+    cpuData?: CpuUsage;
+    timestamp?: number;
+    isPaused?: boolean;
+}
+
+const CpuCard: React.FC<CpuCardProps> = ({ cpuData, timestamp, isPaused = false }) => (
     <StatusCard
         title="CPU Usage"
         icon={Cpu}
@@ -13,7 +20,6 @@ const CpuCard = ({ cpuData, timestamp, isPaused = false }) => (
         <div className="text-center">
             {cpuData ? (
                 <>
-
                     <CircularProgress
                         value={cpuData.usage}
                         color={
@@ -54,4 +60,6 @@ const CpuCard = ({ cpuData, timestamp, isPaused = false }) => (
             )}
         </div>
     </StatusCard>
-); export default CpuCard;
+);
+
+export default CpuCard;

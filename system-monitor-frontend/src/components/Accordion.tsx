@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
-const Accordion = ({ title, children, defaultOpen = false }) => {
-    const [isOpen, setIsOpen] = useState(defaultOpen);
+interface AccordionProps {
+    title: string;
+    children: React.ReactNode;
+    defaultOpen?: boolean;
+}
+
+const Accordion: React.FC<AccordionProps> = ({ title, children, defaultOpen = false }) => {
+    const [isOpen, setIsOpen] = useState<boolean>(defaultOpen);
 
     return (
         <div className="border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden">

@@ -1,7 +1,14 @@
 import React from 'react';
 import { Clock, Pause, Play } from 'lucide-react';
 
-const RefreshIntervalSelector = ({
+interface RefreshIntervalSelectorProps {
+    interval: number;
+    onIntervalChange: (interval: number) => void;
+    isPaused: boolean;
+    onTogglePause: () => void;
+}
+
+const RefreshIntervalSelector: React.FC<RefreshIntervalSelectorProps> = ({
     interval,
     onIntervalChange,
     isPaused,

@@ -1,27 +1,41 @@
 import React, { useState } from 'react';
 import { Grid3X3, Plus, Settings } from 'lucide-react';
-import AppTile from './AppTile';
 
-const AppCard = ({ app, hostname, index }) => {
-    const [iconError, setIconError] = useState(false);
-    const [iconLoading, setIconLoading] = useState(true);
+interface App {
+    name: string;
+    port: number;
+    path: string;
+    protocol: 'http' | 'https' | 'smb';
+    description: string;
+    icon?: string | null;
+}
+
+interface AppCardProps {
+    app: App;
+    hostname: string;
+    index: number;
+}
+
+const AppCard: React.FC<AppCardProps> = ({ app, hostname, index }) => {
+    const [iconError, setIconError] = useState<boolean>(false);
+    const [iconLoading, setIconLoading] = useState<boolean>(true);
 
     const faviconUrl = app.protocol !== 'smb' ?
         `${app.protocol}://${hostname}:${app.port}/favicon.ico` :
         null;
 
-    const handleIconError = () => {
+    const handleIconError = (): void => {
         setIconError(true);
         setIconLoading(false);
     };
 
-    const handleIconLoad = () => {
+    const handleIconLoad = (): void => {
         setIconLoading(false);
         setIconError(false);
     };
 
-    const handleClick = () => {
-        let appUrl;
+    const handleClick = (): void => {
+        let appUrl: string;
         if (app.protocol === 'smb') {
             appUrl = `smb://${hostname}`;
 
@@ -145,13 +159,20 @@ const AppCard = ({ app, hostname, index }) => {
     );
 };
 
-const HorizontalAppCards = ({
+interface HorizontalAppCardsProps {
+    apps?: App[];
+    hostname?: string;
+    showAddButton?: boolean;
+    onAddApp?: (() => void) | null;
+}
+
+const HorizontalAppCards: React.FC<HorizontalAppCardsProps> = ({
     apps = [],
     hostname = window.location.hostname || 'localhost',
     showAddButton = false,
     onAddApp = null
 }) => {
-    const defaultApps = [
+    const defaultApps: App[] = [
         {
             name: 'Portainer',
             port: 9443,

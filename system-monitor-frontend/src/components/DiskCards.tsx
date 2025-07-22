@@ -1,10 +1,18 @@
 import React from 'react';
 import { HardDrive } from 'lucide-react';
+import { DiskUsage, Filesystem } from '@linux-server-stats/shared-types';
 import CircularProgress from './CircularProgress';
 import StatusCard from './StatusCard';
 import CardSpinner from './CardSpinner';
 
-const SingleDiskCard = ({ diskInfo, timestamp, title, isPaused = false }) => (
+interface SingleDiskCardProps {
+    diskInfo?: Filesystem | null;
+    timestamp?: number;
+    title: string;
+    isPaused?: boolean;
+}
+
+const SingleDiskCard: React.FC<SingleDiskCardProps> = ({ diskInfo, timestamp, title, isPaused = false }) => (
     <StatusCard
         title={title}
         icon={HardDrive}
@@ -13,7 +21,6 @@ const SingleDiskCard = ({ diskInfo, timestamp, title, isPaused = false }) => (
         <div className="text-center">
             {diskInfo ? (
                 <>
-
                     <CircularProgress
                         value={diskInfo.usage}
                         color={
@@ -58,7 +65,13 @@ const SingleDiskCard = ({ diskInfo, timestamp, title, isPaused = false }) => (
     </StatusCard>
 );
 
-const DiskCards = ({ diskData, timestamp, isPaused = false }) => {
+interface DiskCardsProps {
+    diskData?: DiskUsage;
+    timestamp?: number;
+    isPaused?: boolean;
+}
+
+const DiskCards: React.FC<DiskCardsProps> = ({ diskData, timestamp, isPaused = false }) => {
     if (!diskData) {
         // Show a single loading card when no data is available
         return (
@@ -86,12 +99,12 @@ const DiskCards = ({ diskData, timestamp, isPaused = false }) => {
     }
 
     // Fallback: show the summary data as a single card (backward compatibility)
-    const summaryDisk = {
+    const summaryDisk: Filesystem = {
         device: 'System Disk',
         mountpoint: '/',
-        total_gb: diskData.total,
-        used_gb: diskData.used,
-        available_gb: diskData.available,
+        total_gb: diskData.total.toString(),
+        used_gb: diskData.used.toString(),
+        available_gb: diskData.available.toString(),
         usage: diskData.usage
     };
 

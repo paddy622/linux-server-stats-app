@@ -1,10 +1,17 @@
 import React from 'react';
 import { Monitor } from 'lucide-react';
+import { MemoryUsage } from '@linux-server-stats/shared-types';
 import CircularProgress from './CircularProgress';
 import StatusCard from './StatusCard';
 import CardSpinner from './CardSpinner';
 
-const MemoryCard = ({ memoryData, timestamp, isPaused = false }) => (
+interface MemoryCardProps {
+    memoryData?: MemoryUsage;
+    timestamp?: number;
+    isPaused?: boolean;
+}
+
+const MemoryCard: React.FC<MemoryCardProps> = ({ memoryData, timestamp, isPaused = false }) => (
     <StatusCard
         title="Memory Usage"
         icon={Monitor}
@@ -13,7 +20,6 @@ const MemoryCard = ({ memoryData, timestamp, isPaused = false }) => (
         <div className="text-center">
             {memoryData ? (
                 <>
-
                     <CircularProgress
                         value={memoryData.usage}
                         color={
@@ -50,4 +56,6 @@ const MemoryCard = ({ memoryData, timestamp, isPaused = false }) => (
             )}
         </div>
     </StatusCard>
-); export default MemoryCard;
+);
+
+export default MemoryCard;
