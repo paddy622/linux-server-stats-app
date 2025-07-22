@@ -1,7 +1,5 @@
 export interface CpuUsage {
     usage: number;
-    cores: number;
-    model: string;
 }
 export interface CpuInfo {
     model: string;

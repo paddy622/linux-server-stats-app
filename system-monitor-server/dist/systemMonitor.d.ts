@@ -1,0 +1,14 @@
+import { CpuUsage, CpuInfo, BatteryInfo, MemoryUsage, DockerContainer, TemperatureInfo, NetworkInterface, UptimeInfo, DiskUsage, LoadAverage, StaticSystemInfo, DynamicSystemInfo } from '@linux-server-stats/shared-types';
+export declare function getCpuUsage(): CpuUsage;
+export declare function getCpuInfo(): CpuInfo;
+export declare function getBatteryInfo(): BatteryInfo[];
+export declare function getMemoryUsage(): MemoryUsage;
+export declare function getDockerContainers(): DockerContainer[];
+export declare function getTemperature(): TemperatureInfo;
+export declare function getNetworkInfo(): NetworkInterface[];
+export declare function getUptime(): UptimeInfo;
+export declare function getDiskUsage(): DiskUsage;
+export declare function getLoadAverage(): LoadAverage;
+export declare function getHostname(): string;
+export declare function getStaticSystemInfo(): StaticSystemInfo;
+export declare function getDynamicSystemInfo(): DynamicSystemInfo;
