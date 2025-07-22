@@ -2,13 +2,29 @@ import React from 'react';
 import { Grid3X3, Plus, Settings } from 'lucide-react';
 import AppTile from './AppTile';
 
-const AppGrid = ({
+interface App {
+    name: string;
+    port: number;
+    path?: string;
+    protocol?: 'http' | 'https' | 'smb';
+    description?: string;
+    icon?: string | null;
+}
+
+interface AppGridProps {
+    apps?: App[];
+    hostname?: string;
+    showAddButton?: boolean;
+    onAddApp?: (() => void) | null;
+}
+
+const AppGrid: React.FC<AppGridProps> = ({
     apps = [],
     hostname = window.location.hostname || 'localhost',
     showAddButton = false,
     onAddApp = null
 }) => {
-    const defaultApps = [
+    const defaultApps: App[] = [
         {
             name: 'Portainer',
             port: 9443,

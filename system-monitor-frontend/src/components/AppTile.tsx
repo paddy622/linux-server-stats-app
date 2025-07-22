@@ -1,7 +1,17 @@
 import React, { useState } from 'react';
 import { ExternalLink, Globe, AlertCircle } from 'lucide-react';
 
-const AppTile = ({
+interface AppTileProps {
+    name: string;
+    port: number;
+    path?: string;
+    protocol?: 'http' | 'https' | 'smb';
+    icon?: string | null;
+    description?: string;
+    hostname?: string;
+}
+
+const AppTile: React.FC<AppTileProps> = ({
     name,
     port,
     path = '',
@@ -10,14 +20,14 @@ const AppTile = ({
     description = '',
     hostname = window.location.hostname || 'localhost'
 }) => {
-    const [iconError, setIconError] = useState(false);
-    const [iconLoading, setIconLoading] = useState(true);
+    const [iconError, setIconError] = useState<boolean>(false);
+    const [iconLoading, setIconLoading] = useState<boolean>(true);
 
     // Use server IP address instead of hostname, fallback to window location
     const resolvedHostname = window.location.hostname || 'localhost';
 
     // Handle different protocols
-    let appUrl;
+    let appUrl: string;
     if (protocol === 'smb') {
         appUrl = `smb://${resolvedHostname}`;
     } else {
@@ -27,16 +37,17 @@ const AppTile = ({
     // Don't use favicon.ico by default, use null to show generic icon
     const faviconUrl = icon || `${protocol}://${resolvedHostname}:${port}/favicon.ico`;
 
-
-    const handleIconError = () => {
+    const handleIconError = (): void => {
         setIconError(true);
         setIconLoading(false);
     };
 
-    const handleIconLoad = () => {
+    const handleIconLoad = (): void => {
         setIconLoading(false);
         setIconError(false);
-    }; const handleTileClick = () => {
+    };
+
+    const handleTileClick = (): void => {
         if (protocol === 'smb') {
             // For SMB, copy the URL to clipboard and show a notification
             navigator.clipboard.writeText(appUrl).then(() => {

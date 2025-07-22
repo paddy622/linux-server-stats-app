@@ -1,9 +1,17 @@
 import React from 'react';
 import { Network, Clock } from 'lucide-react';
+import { NetworkInterface, UptimeInfo } from '@linux-server-stats/shared-types';
 import StatusCard from './StatusCard';
 import CardSpinner from './CardSpinner';
 
-const NetworkCard = ({ networkData, uptimeData, timestamp, isPaused = false }) => (
+interface NetworkCardProps {
+    networkData?: NetworkInterface[];
+    uptimeData?: UptimeInfo;
+    timestamp?: number;
+    isPaused?: boolean;
+}
+
+const NetworkCard: React.FC<NetworkCardProps> = ({ networkData, uptimeData, timestamp, isPaused = false }) => (
     <StatusCard
         title="Network & Uptime"
         icon={Network}
@@ -12,7 +20,6 @@ const NetworkCard = ({ networkData, uptimeData, timestamp, isPaused = false }) =
         <div className="space-y-3">
             {(networkData && uptimeData) ? (
                 <>
-
                     <div className="bg-blue-50 dark:bg-blue-900/50 rounded-lg p-3">
                         <div className="flex items-center justify-between">
                             <div className="text-xs text-blue-600 dark:text-blue-400 mb-1">System Uptime</div>

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Sun, Moon } from 'lucide-react';
 
-const ThemeToggle = () => {
-    const [isDark, setIsDark] = useState(false);
+const ThemeToggle: React.FC = () => {
+    const [isDark, setIsDark] = useState<boolean>(false);
 
     // Check for saved theme preference or default to light mode
     useEffect(() => {
@@ -19,7 +19,7 @@ const ThemeToggle = () => {
     }, []);
 
     // Toggle theme
-    const toggleTheme = () => {
+    const toggleTheme = (): void => {
         const newTheme = !isDark;
         setIsDark(newTheme);
 

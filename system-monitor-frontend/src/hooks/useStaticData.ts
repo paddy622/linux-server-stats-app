@@ -1,11 +1,19 @@
 import { useState, useEffect } from 'react';
+import { StaticSystemInfo } from '@linux-server-stats/shared-types';
 
-const useStaticData = (baseUrl) => {
-    const [staticData, setStaticData] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+interface UseStaticDataReturn {
+    staticData: StaticSystemInfo | null;
+    loading: boolean;
+    error: string | null;
+    refetch: () => Promise<StaticSystemInfo>;
+}
 
-    const fetchStaticData = async () => {
+const useStaticData = (baseUrl: string): UseStaticDataReturn => {
+    const [staticData, setStaticData] = useState<StaticSystemInfo | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const fetchStaticData = async (): Promise<StaticSystemInfo> => {
         try {
             setLoading(true);
             setError(null);
@@ -29,7 +37,8 @@ const useStaticData = (baseUrl) => {
             }
         } catch (error) {
             console.error('Failed to fetch static data:', error);
-            setError(error.message);
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+            setError(errorMessage);
             throw error;
         } finally {
             setLoading(false);

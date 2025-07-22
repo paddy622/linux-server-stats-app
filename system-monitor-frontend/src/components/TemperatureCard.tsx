@@ -1,9 +1,16 @@
 import React from 'react';
 import { Thermometer } from 'lucide-react';
+import { TemperatureInfo } from '@linux-server-stats/shared-types';
 import StatusCard from './StatusCard';
 import CardSpinner from './CardSpinner';
 
-const TemperatureCard = ({ temperatureData, timestamp, isPaused = false }) => (
+interface TemperatureCardProps {
+    temperatureData?: TemperatureInfo;
+    timestamp?: number;
+    isPaused?: boolean;
+}
+
+const TemperatureCard: React.FC<TemperatureCardProps> = ({ temperatureData, timestamp, isPaused = false }) => (
     <StatusCard
         title="Temperature"
         icon={Thermometer}
@@ -12,7 +19,6 @@ const TemperatureCard = ({ temperatureData, timestamp, isPaused = false }) => (
         <div className="text-center">
             {temperatureData ? (
                 <>
-
                     {temperatureData.cpu ? (
                         <>
                             <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg p-4 mb-3">
@@ -52,4 +58,6 @@ const TemperatureCard = ({ temperatureData, timestamp, isPaused = false }) => (
             )}
         </div>
     </StatusCard>
-); export default TemperatureCard;
+);
+
+export default TemperatureCard;

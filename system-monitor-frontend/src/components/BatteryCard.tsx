@@ -1,10 +1,17 @@
 import React from 'react';
 import { Battery, BatteryLow, Zap } from 'lucide-react';
+import { BatteryInfo } from '@linux-server-stats/shared-types';
 import CircularProgress from './CircularProgress';
 import StatusCard from './StatusCard';
 import CardSpinner from './CardSpinner';
 
-const BatteryCard = ({ batteryData, timestamp, isPaused = false }) => {
+interface BatteryCardProps {
+    batteryData?: BatteryInfo[];
+    timestamp?: number;
+    isPaused?: boolean;
+}
+
+const BatteryCard: React.FC<BatteryCardProps> = ({ batteryData, timestamp, isPaused = false }) => {
     return (
         <StatusCard
             title="Battery Status"
@@ -14,7 +21,6 @@ const BatteryCard = ({ batteryData, timestamp, isPaused = false }) => {
             <div className="text-center">
                 {batteryData ? (
                     <>
-
                         {batteryData.length > 0 ? (
                             (() => {
                                 // Get the first battery (most systems have only one)

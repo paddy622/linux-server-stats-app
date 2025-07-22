@@ -1,7 +1,15 @@
 import React from 'react';
-import { Activity, Pause } from 'lucide-react';
+import { Activity, Pause, LucideIcon } from 'lucide-react';
 
-const StatusCard = ({ title, children, icon: Icon, className = "", isPaused = false }) => (
+interface StatusCardProps {
+    title: string;
+    children: React.ReactNode;
+    icon: LucideIcon;
+    className?: string;
+    isPaused?: boolean;
+}
+
+const StatusCard: React.FC<StatusCardProps> = ({ title, children, icon: Icon, className = "", isPaused = false }) => (
     <div
         className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300 ${className}`}
     >

@@ -1,7 +1,13 @@
 import React from 'react';
-import { Activity } from 'lucide-react';
+import { Activity, LucideIcon } from 'lucide-react';
 
-const LoadingState = ({ title, subtitle, icon: Icon = Activity }) => (
+interface LoadingStateProps {
+    title: string;
+    subtitle: string;
+    icon?: LucideIcon;
+}
+
+const LoadingState: React.FC<LoadingStateProps> = ({ title, subtitle, icon: Icon = Activity }) => (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
         <div className="text-center bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 sm:p-8 max-w-md mx-auto border border-gray-200 dark:border-gray-700">
             <div className="bg-blue-50 dark:bg-blue-900/50 rounded-full p-4 w-16 h-16 mx-auto mb-4">

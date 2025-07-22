@@ -1,6 +1,16 @@
 import React from 'react';
 
-const CircularProgress = ({
+type ColorType = "blue" | "green" | "yellow" | "red";
+
+interface CircularProgressProps {
+    value: number;
+    max?: number;
+    size?: number;
+    strokeWidth?: number;
+    color?: ColorType;
+}
+
+const CircularProgress: React.FC<CircularProgressProps> = ({
     value,
     max = 100,
     size = 80,
@@ -11,7 +21,7 @@ const CircularProgress = ({
     const circumference = radius * 2 * Math.PI;
     const offset = circumference - (value / max) * circumference;
 
-    const colorClasses = {
+    const colorClasses: Record<ColorType, string> = {
         blue: "text-blue-500",
         green: "text-green-500",
         yellow: "text-yellow-500",

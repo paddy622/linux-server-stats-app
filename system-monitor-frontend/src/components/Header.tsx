@@ -1,9 +1,26 @@
 import React from 'react';
 import { Server, Info } from 'lucide-react';
 import { QRCodeCanvas } from 'qrcode.react';
+import { StaticSystemInfo } from '@linux-server-stats/shared-types';
 import ThemeToggle from './ThemeToggle';
 
-const Header = ({ hostname, platform, arch, connected, reconnecting = false, staticData }) => {
+interface HeaderProps {
+    hostname?: string;
+    platform?: string;
+    arch?: string;
+    connected: boolean;
+    reconnecting?: boolean;
+    staticData?: StaticSystemInfo | null;
+}
+
+const Header: React.FC<HeaderProps> = ({
+    hostname,
+    platform,
+    arch,
+    connected,
+    reconnecting = false,
+    staticData
+}) => {
     const getConnectionStatus = () => {
         if (connected) return { color: 'text-green-600', bg: 'bg-green-500', text: 'Connected' };
         if (reconnecting) return { color: 'text-yellow-600', bg: 'bg-yellow-500', text: 'Reconnecting...' };

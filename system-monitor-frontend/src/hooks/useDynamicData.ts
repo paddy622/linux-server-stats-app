@@ -1,14 +1,22 @@
 import { useState, useEffect, useRef } from 'react';
+import { DynamicSystemInfo } from '@linux-server-stats/shared-types';
 
-const useDynamicData = (wsUrl, refreshInterval = 2000) => {
-    const [dynamicData, setDynamicData] = useState(null);
-    const [connected, setConnected] = useState(false);
-    const [reconnecting, setReconnecting] = useState(false);
-    const [ws, setWs] = useState(null);
-    const reconnectTimeoutRef = useRef(null);
-    const intervalRef = useRef(null);
+interface UseDynamicDataReturn {
+    dynamicData: DynamicSystemInfo | null;
+    connected: boolean;
+    reconnecting: boolean;
+    sendMessage: (message: any) => void;
+}
 
-    const connect = () => {
+const useDynamicData = (wsUrl: string, refreshInterval: number | null = 2000): UseDynamicDataReturn => {
+    const [dynamicData, setDynamicData] = useState<DynamicSystemInfo | null>(null);
+    const [connected, setConnected] = useState<boolean>(false);
+    const [reconnecting, setReconnecting] = useState<boolean>(false);
+    const [ws, setWs] = useState<WebSocket | null>(null);
+    const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+    const connect = (): WebSocket | null => {
         try {
             console.log('Connecting to WebSocket for dynamic data:', wsUrl);
             const websocket = new WebSocket(wsUrl);
@@ -41,7 +49,7 @@ const useDynamicData = (wsUrl, refreshInterval = 2000) => {
                     console.log('Received full data via WebSocket (legacy)');
                     const data = message.data;
 
-                    const newDynamicData = {
+                    const newDynamicData: DynamicSystemInfo = {
                         timestamp: data.timestamp,
                         cpu: { usage: data.cpu?.usage },
                         memory: data.memory,
@@ -139,7 +147,7 @@ const useDynamicData = (wsUrl, refreshInterval = 2000) => {
     }, [connected, refreshInterval]);
 
     // Send a message to the WebSocket server
-    const sendMessage = (message) => {
+    const sendMessage = (message: any): void => {
         if (ws && ws.readyState === WebSocket.OPEN) {
             ws.send(JSON.stringify(message));
         }
