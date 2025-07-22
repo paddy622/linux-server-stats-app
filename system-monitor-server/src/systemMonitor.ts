@@ -25,34 +25,28 @@ const HOST_ETC = '/host/etc';
 
 export function getCpuUsage(): CpuUsage {
     try {
-        // const stat = fs.readFileSync(`${HOST_PROC}/stat`, 'utf8');
-        // const lines = stat.split('\n');
         const stdout = execSync('mpstat -P ALL 1 1', { encoding: 'utf8' });
         // log the raw output for debugging
-        console.log('Raw mpstat output:');
-        console.log(stdout);
+        // console.log('Raw mpstat output:');
+        // console.log(stdout);
 
         const lines = stdout.split('\n');
-        // Debug the actual output for troubleshooting
-        console.log('Raw mpstat output:');
-        lines.forEach((line, index) => {
-            console.log(`Line ${index}: ${line}`);
-        });
+        // // Debug the actual output for troubleshooting
+        // console.log('Raw mpstat output:');
+        // lines.forEach((line, index) => {
+        //     console.log(`Line ${index}: ${line}`);
+        // });
 
-        const cpuLine = lines[4];
+        const cpuLine = lines[3];
         console.log('CPU Line:', JSON.stringify(cpuLine));
         const values = cpuLine.split(/\s+/).slice(1).map(String);
-        //log the parsed values for debugging
-        console.log('Parsed CPU Line Values:', JSON.stringify(values));
-        //log value[3] for debugging
-        console.log('CPU Usage Value:', values[3]);
-
-        // const [user, nice, system, idle, iowait, irq, softirq] = values;
-        // const total = user + nice + system + idle + iowait + irq + softirq;
-        // const usage = ((total - idle - iowait) / total) * 100;
+        // //log the parsed values for debugging
+        // console.log('Parsed CPU Line Values:', JSON.stringify(values));
+        // //log value[3] for debugging
+        // console.log('CPU Usage Value:', values[3]);
 
         return {
-            usage: parseFloat(values[3]),
+            usage: parseFloat(values[1]),
         };
     } catch (error) {
         console.error('CPU usage error:', (error as Error).message);
