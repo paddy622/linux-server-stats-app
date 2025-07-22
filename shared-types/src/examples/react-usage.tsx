@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import {
     DynamicSystemInfo,
-    DynamicSystemInfo,
     StaticSystemInfo,
     WebSocketMessage,
     AllWebSocketMessages,
@@ -13,8 +12,8 @@ import {
 
 // Example React hook using the shared types
 export function useSystemData() {
-    const [staticData, setStaticData] = useState<StaticSystemInfo | null>(null);
-    const [dynamicData, setDynamicData] = useState<DynamicSystemInfo | null>(null);
+    const [staticData, setStaticData] = useState<StaticSystemInfo | null>();
+    const [dynamicData, setDynamicData] = useState<DynamicSystemInfo | null>();
     const [loadingState, setLoadingState] = useState<LoadingState>({
         isLoading: true,
         error: null
@@ -27,31 +26,6 @@ export function useSystemData() {
                 break;
             case 'dynamic':
                 setDynamicData(message.data);
-                break;
-            case 'system':
-                // Handle full system data
-                const systemData = message.data;
-                setStaticData({
-                    hostname: systemData.hostname,
-                    platform: systemData.platform,
-                    arch: systemData.arch,
-                    cpu: {
-                        model: systemData.cpu.model,
-                        cores: systemData.cpu.cores
-                    }
-                });
-                setDynamicData({
-                    timestamp: systemData.timestamp,
-                    cpu: { usage: systemData.cpu.usage },
-                    memory: systemData.memory,
-                    temperature: systemData.temperature,
-                    uptime: systemData.uptime,
-                    network: systemData.network,
-                    disk: systemData.disk,
-                    loadavg: systemData.loadavg,
-                    battery: systemData.battery,
-                    docker: systemData.docker
-                });
                 break;
         }
         setLoadingState({ isLoading: false, error: null });
